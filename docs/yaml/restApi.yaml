@@ -9,3 +9,17 @@ info:
     name: MIT
     url: https://github.com/vinhngo1907/v-network/blob/main/LICENSE
 host: http://localhost:3000/api/v1/
+
+tags:
+  - name: Auth
+    description: Operations about user authentication
+  - name: E2E
+    description: Operations about user end to end message settings
+  - name: Personal
+    description: Operations about user settings
+  - name: Group
+    description: Operations about group message settings
+  - name: Channel
+    description: Operations about channel message settings
+  - name: Common
+    description: Operations related to common items
