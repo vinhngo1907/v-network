@@ -6,7 +6,7 @@ info:
     phone: '+989030207892'
   license:
     name: MIT
-    url: https://github.com/TREER00T/Social-Network-Server/blob/main/LICENSE
+    url: https://github.com/vinhngo1907/v-network/blob/main/LICENSE
   description: Social Network API Documentation
 
 baseUrl: http://localhost:4000
