@@ -1,0 +1,29 @@
+@serverUrl = http://localhost:4000/user
+@adminUrl = http://localhost:3000/user
+
+GET {{serverUrl}}
+Content-Type: application/json
+###
+
+GET {{adminUrl}}
+Content-Type: application/json
+
+###
+POST {{serverUrl}}/register
+Content-Type: application/json
+
+{
+  "email":"vinhtrungngo1907@gmail.com",
+  "fullname":"Ngo Trung Vinh",
+  "username": "vinhngo97",
+  "password": "123456"
+}
+###
+
+PUT {{serverUrl}}/update/2
+Content-Type: application/json
+
+{
+  "email":"vinhtrungngo@gmail.com",
+  "fullname":"Koo kuu"
+}
