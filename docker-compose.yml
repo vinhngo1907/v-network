@@ -1,57 +1,80 @@
-version: '3.8'
+version: '3.9'
+
 services:
-  kafka:
-    image: 'bitnami/kafka:latest'
-    ports:
-      - '9092:9092'
-    volumes:
-      - ./kafka:/bitnami/kafka
-    environment:
-      - BITNAMI_DEBUG=true
-      - KAFKA_ENABLE_KRAFT=yes
-      - KAFKA_CFG_PROCESS_ROLES=broker,controller
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=INTERNAL
-      - KAFKA_CFG_LISTENERS=CLIENT://:9092,INTERNAL://:9093
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT
-      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://127.0.0.1:9092
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
-      - KAFKA_BROKER_ID=1
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@:9093
-      - KAFKA_INTER_BROKER_USER=${USERNAME_KAFKA}
-      - KAFKA_INTER_BROKER_PASSWORD=${PASSWORD_KAFKA}
-      - KAFKA_CLIENT_USERS=${USERNAME_KAFKA}
-      - KAFKA_CLIENT_PASSWORDS=${PASSWORD_KAFKA}
-      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN
-      - KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN
-      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
+  # kafka:
+  #   image: 'bitnami/kafka:latest'
+  #   ports:
+  #     - '9092:9092'
+  #   volumes:
+  #     - ./kafka:/bitnami/kafka
+  #   environment:
+  #     - BITNAMI_DEBUG=true
+  #     - KAFKA_ENABLE_KRAFT=yes
+  #     - KAFKA_CFG_PROCESS_ROLES=broker,controller
+  #     - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=INTERNAL
+  #     - KAFKA_CFG_LISTENERS=CLIENT://:9092,INTERNAL://:9093
+  #     - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT
+  #     - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://127.0.0.1:9092
+  #     - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+  #     - KAFKA_BROKER_ID=1
+  #     - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@:9093
+  #     - KAFKA_INTER_BROKER_USER=${USERNAME_KAFKA}
+  #     - KAFKA_INTER_BROKER_PASSWORD=${PASSWORD_KAFKA}
+  #     - KAFKA_CLIENT_USERS=${USERNAME_KAFKA}
+  #     - KAFKA_CLIENT_PASSWORDS=${PASSWORD_KAFKA}
+  #     - KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN
+  #     - KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN
+  #     - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
+  
   mongo:
-    container_name: mongo
+    container_name: network_mongo
     image: mongo
+    restart: always
     ports:
       - 27017:27017
     volumes:
-      - ./data/mongo:/data/db
-  postgres:
-    container_name: postgres
-    image: postgres
+      - mongo:/data/mongo:/data/db
+  
+  influxdb:
+    image: influxdb
+    container_name: network_influxdb
+    restart: always
     ports:
-      - 5432:5432
+      - '8086:8086'
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=aioshima
-      - POSTGRES_DB=example
-  pg-admin:
-    image: dpage/pgadmin4:6
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PG_USER}
-      - PGADMIN_DEFAULT_PASSWORD=${PG_PASS}
-      - PGADMIN_LISTEN_PORT=5050
+      - influxdb:/var/lib/influxdb
+  
+  redis:
+    image: redis
+    container_name: network_redis
+    restart: always
     ports:
-      - 5050:5050
+      - '6379:6379'
+    volumes:
+      - redis:/var/lib/redis
+  
+  src:
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: src
+    image: social_network
     depends_on:
-      - postgres
+      - mongo
+      - redis
+      - influxdb
+    links:
+      - redis
+      - mongo
+      - influxdb
+    ports:
+      - '3000:3000'
+      - '4000:4000'
+      - '17892:17892'
+    volumes:
+      - ./:/src/
+  
   # krakend:
   #   image: devopsfaith/krakend:latest
   #   restart: unless-stopped
@@ -60,3 +83,11 @@ services:
   #     - 8080:8080
   #   volumes:
   #     - ./krakend/
+
+volumes:
+  mongo:
+    driver: local
+  redis:
+    driver: local
+  influxdb:
+    driver: local
