@@ -1,8 +1,9 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { AppConfigService } from './config/appConfigService';
+import { AppModule } from 'src/app.module';
+import { AppConfigService } from 'src/config/appConfigService';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppLoggerService } from 'src/logger/service';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -12,8 +13,17 @@ async function bootstrap() {
 			whitelist: true,
 		}),
 	);
-	const appConfigService = app.get<AppConfigService>(AppConfigService);
-	await app.listen(appConfigService.port);
+	const appConfigService = app.get(AppConfigService);
+	const logger = app.get(AppLoggerService);
+	app.useLogger(logger);
+
+	const port = appConfigService.port;
+
+	setupSwagger(app);
+	await app.listen(port, () => {
+		logger.log(`Server is running on port ${port}`, 'Bootstrap');
+	});
+
 }
 bootstrap();
 
