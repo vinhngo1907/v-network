@@ -6,6 +6,6 @@ export class AppConfigService {
     constructor(private readonly configService: ConfigService) { }
 
     get port(): number {
-        return this.configService.get('PORT') || 3333;
+        return this.configService.get('HTTP_SERVER_PORT') || 3333;
     }
 }
