@@ -3,6 +3,7 @@ import Redis from 'ioredis';
 import { AppConfigService } from 'src/config/appConfigservice';
 import { AppLoggerService } from 'src/logger/service';
 
+@Injectable()
 export class RedisService {
     client: Redis;
     private logger: AppLoggerService;
