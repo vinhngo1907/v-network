@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { IdeaModule } from './idea/idea.module';
-import { UserModule } from './user/user.module';
 import { DatabaseModule } from './database/database.module';
 import { KafkaModule } from './kafka/kafka.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
@@ -10,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { AppConfigService } from './config/appConfigService';
 
 @Module({
-    imports: [IdeaModule, UserModule, DatabaseModule, KafkaModule],
+    imports: [IdeaModule, DatabaseModule, KafkaModule],
     controllers: [],
     providers: [,
         {
