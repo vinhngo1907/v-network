@@ -1,9 +1,10 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
-// import { PrismaClient } from '@prisma/client';
+import { Injectable } from '@nestjs/common';
+import Redis from 'ioredis';
+import { AppConfigService } from 'src/config/appConfigservice';
+import { AppLoggerService } from 'src/logger/service';
+
 
 @Injectable()
-export class DatabaseService {
-    // async onModuleInit() {
-    //     await this.$connect();
-    // }
+export class MongoDbDriverService {
+
 }
