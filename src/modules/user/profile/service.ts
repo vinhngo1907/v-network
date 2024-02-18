@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { UserDTO } from './dto';
-import { DatabaseService } from 'src/database/mongodb/service';
+// import { DatabaseService } from 'src/database';
 import { from, of } from 'rxjs';
 import { KafkaService } from 'src/kafka/kafka.service';
 import * as jwt from "jsonwebtoken";
@@ -13,7 +13,7 @@ export class UserService implements OnModuleInit {
 	private loggerService: Logger
 	constructor(
 		private httpService: HttpService,
-		private databaseService: DatabaseService,
+		// private databaseService: DatabaseService,
 		private kafkaService: KafkaService
 	) {
 		this.loggerService = new Logger();
