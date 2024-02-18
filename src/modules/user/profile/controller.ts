@@ -2,9 +2,9 @@ import { Controller, Inject, UseGuards, Get, Post, UsePipes, Body, Param, Put, D
 import { ClientProxy } from '@nestjs/microservices';
 import { from, map, of, switchMap } from 'rxjs';
 import { KafkaService } from 'src/kafka/kafka.service';
-import { AuthGuard } from 'src/shared/auth.guard';
-import { UserDTO } from './user.dto';
-import { UserService } from './user.service';
+import { AuthGuard } from '../gen/auth.guard';;
+import { UserDTO } from './dto';
+import { UserService } from './service';
 
 @Controller('user')
 export class UserController {
@@ -23,14 +23,7 @@ export class UserController {
         @Query('order_by') order_by: string = 'desc',
     ) {
         try {
-            return (this.userService.showAll(page, limit, status, order_by)).pipe(
-                switchMap((data) => {
-                    return of({
-                        msg: 'Successfully',
-                        data: data,
-                    });
-                }),
-            );
+            return [];
         } catch (err: any) {
             console.log(err);
             throw err;

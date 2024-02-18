@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { UserDTO } from './user.dto';
+import { UserDTO } from './dto';
 import { DatabaseService } from 'src/database/mongoDbDriverConnection';
 import { from, of } from 'rxjs';
 import { KafkaService } from 'src/kafka/kafka.service';
@@ -29,36 +29,7 @@ export class UserService implements OnModuleInit {
 				fromBeginning: true
 			});
 			await consumerProfileUser.run({
-				eachMessage: async ({ topic, partition, message }) => {
-					try {
-						this.loggerService.log("receiver topic " + topic);
-						const request: {
-							dataToUpdated: string,
-							id: number,
-							steps: string[],
-							step_count: number
-						} = JSON.parse(message.value as any);
-						// update profile
-						await this.databaseService.user.update({
-							where: {
-								id: Number(request.id)
-							},
-							data: {
-								...JSON.parse(request.dataToUpdated)
-							}
-						});
 
-						// nex step
-						const newTopic = request.steps[request.step_count];
-						request.step_count = Number(request.step_count) + 1;
-						if (newTopic) {
-							await this.kafkaService.SendMessage(newTopic, request as any);
-							return;
-						}
-					} catch (err: any) {
-						console.log("Failed to listen topic: ", topic)
-					}
-				}
 			});
 		} catch (err) {
 			this.loggerService.error("An error while init the module auth", err);
@@ -83,34 +54,17 @@ export class UserService implements OnModuleInit {
 		};
 		let obj = Object.keys(filterObj).length >= 1 ? { ...filterObj } : {}
 
-		return from(this.databaseService.user.findMany({
-			where: obj,
-			take: Number(limit),
-			skip: (Number(page) - 1) * Number(limit),
-			orderBy: {
-				id: order_by === 'desc' ? 'desc' : 'asc',
-			},
-		}))
+		return []
 	}
 	async register(data: UserDTO) {
 		try {
 			const { username, password } = data;
-			const user = await this.databaseService.user.findUnique({
-				where: {
-					username: username,
-				}
-			});
+			const user = {};
 			if (user) {
 				throw new HttpException('Invalid username/password', HttpStatus.BAD_REQUEST);
 			}
 			const passHashed = await bcrypt.hash(password, 10)
-			const newUser = await this.databaseService.user.create({
-				data: {
-					username,
-					password: passHashed,
-					...data
-				}
-			});
+			const newUser = {};
 			await this.kafkaService.SendMessage('profile_user', newUser)
 			return of({
 				user: { ...newUser, password: "" }
@@ -124,21 +78,17 @@ export class UserService implements OnModuleInit {
 	async login(data: UserDTO) {
 		try {
 			const { username, password } = data;
-			const user = await this.databaseService.user.findUnique({
-				where: {
-					username: username
-				}
-			});
-			if (!user || !(await bcrypt.compare(password, user.password))) {
+			const user = {};
+			if (!user || !(await bcrypt.compare(password, ""))) {
 				throw new HttpException('This user is not exist', HttpStatus.BAD_REQUEST);
 			}
 
-			const token = await jwt.sign({ userId: user.id }, process.env.SECRET_JWT);
+			const token = "";
 			let objRes = Object.assign({
 				user,
 				token,
 			});
-		
+
 			return of({
 				objRes
 			});
@@ -149,23 +99,13 @@ export class UserService implements OnModuleInit {
 
 	async update(id: number, data: UserDTO) {
 		try {
-			const user = await this.databaseService.user.findUnique({
-				where: { id: Number(id) }
-			});
+			const user = {};
 
 			if (!user) {
 				throw new HttpException('This user is not exists', HttpStatus.BAD_REQUEST);
 			}
 
-			const updatedUser = await this.databaseService.user.update({
-				data: {
-					...data,
-					password: user.password
-				},
-				where: {
-					id: id
-				}
-			});
+			const updatedUser = {};
 
 			return updatedUser;
 		} catch (err: any) {
@@ -174,9 +114,7 @@ export class UserService implements OnModuleInit {
 	}
 	async delete(id: number) {
 		try {
-			const deletedUser = await this.databaseService.user.delete({
-				where: { id: id }
-			});
+			const deletedUser = {};
 
 			if (!deletedUser) {
 				throw new HttpException('This user is not exists', HttpStatus.BAD_REQUEST);
@@ -190,12 +128,7 @@ export class UserService implements OnModuleInit {
 
 	async block(id: number) {
 		try {
-			const blockedUser = await this.databaseService.user.update({
-				where: { id: id },
-				data: {
-					status: 'inactive'
-				}
-			});
+			const blockedUser = true;
 			if (!blockedUser) {
 				throw new HttpException('This user is not exists', HttpStatus.BAD_REQUEST);
 			}
