@@ -1,8 +1,17 @@
 import { Module } from '@nestjs/common';
-import { RedisModule } from './redis';
 import { MongoDbDriverModule } from './mongodb';
+import { RedisModule } from './redis';
+
 @Module({
-  providers: [RedisModule, MongoDbDriverModule],
-  // exports: [DatabaseService]
+	imports: [
+		MongoDbDriverModule,
+		RedisModule,
+		// Add other imported modules here if needed
+	],
+	exports: [
+		MongoDbDriverModule,
+		RedisModule,
+		// Add other exported modules here if needed
+	],
 })
-export class DatabaseModule {}
+export class DatabaseModule { }
