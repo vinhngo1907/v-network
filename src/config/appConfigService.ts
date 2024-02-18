@@ -22,7 +22,7 @@ export class AppConfigService {
 	}
 	get mongoConfig(): MongoConfig {
 		return {
-			uri: this.configService.get<string>('MONGODB_URI'),
+			uri: this.configService.get<string>(configKeys.MONGODB_URI),
 			// Add more MongoDB configuration properties as needed
 		};
 	}
