@@ -11,4 +11,6 @@ export const configKeys = {
 
 	HEADER_USER_ID: 'HEADER_USER_ID',
 	HEADER_IS_ADMIN: 'HEADER_IS_ADMIN',
+
+	MONGODB_URI: ""
 };
