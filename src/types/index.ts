@@ -11,6 +11,13 @@ export interface MongoConfig {
     // Add more MongoDB configuration properties as needed
 }
 
+export interface InfluxConfig {
+    url: string;
+    org: string;
+    token: string;
+    bucket: string;
+}
+
 export interface HeaderConfig {
 
 }
