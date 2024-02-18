@@ -13,13 +13,14 @@ export class AppConfigService {
 
 	get redisConfig(): RedisConfig {
 		return {
-			host: this.configService.get(configKeys.REDIS_HOST),
+			host: this.configService.get<string>(configKeys.REDIS_HOST),
 			port: this.configService.get(configKeys.REDIS_PORT),
-			password: this.configService.get(configKeys.REDIS_PASSWORD),
-			db: this.configService.get(configKeys.REDIS_DB),
+			password: this.configService.get<string>(configKeys.REDIS_PASSWORD),
+			db: this.configService.get<string>(configKeys.REDIS_DB),
 			ex: this.configService.get(configKeys.REDIS_EX),
 		};
 	}
+	
 	get mongoConfig(): MongoConfig {
 		return {
 			uri: this.configService.get<string>(configKeys.MONGO_URI),
