@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DatabaseService } from './mongoDbDriverConnection';
+import { DatabaseService } from './mongodb/mongoDbDriverConnection';
 
 @Module({
   providers: [DatabaseService],

@@ -1,25 +1,17 @@
 import { Module } from '@nestjs/common';
-import { IdeaModule } from 'src/idea/module';
-import { DatabaseModule } from 'src/database/database.module';
+// import { IdeaModule } from 'src/idea/module';
+import { DatabaseModule } from 'src/database';
 import { KafkaModule } from 'src/kafka/kafka.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { HttpErrorFilter } from 'src/shared/http.error.filter';
-import { LogginInterceptor } from 'src/shared/logging.interceptor';
+// import { HttpErrorFilter } from 'src/shared/http.error.filter';
+// import { LogginInterceptor } from 'src/shared/logging.interceptor';
 import { ConfigService } from '@nestjs/config';
 import { AppConfigService } from 'src/config/appConfigService';
 
 @Module({
-    imports: [IdeaModule, DatabaseModule, KafkaModule],
+    imports: [DatabaseModule, KafkaModule],
     controllers: [],
-    providers: [,
-        {
-            provide: APP_FILTER,
-            useClass: HttpErrorFilter,
-        },
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: LogginInterceptor,
-        },
+    providers: [
         ConfigService,
         AppConfigService
     ],

@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { UserDTO } from './dto';
-import { DatabaseService } from 'src/database/mongoDbDriverConnection';
+import { DatabaseService } from 'src/database/mongodb/mongoDbDriverConnection';
 import { from, of } from 'rxjs';
 import { KafkaService } from 'src/kafka/kafka.service';
 import * as jwt from "jsonwebtoken";
