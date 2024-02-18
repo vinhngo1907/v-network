@@ -16,7 +16,7 @@ export class AppConfigService {
 			host: this.configService.get<string>(configKeys.REDIS_HOST),
 			port: this.configService.get(configKeys.REDIS_PORT),
 			password: this.configService.get<string>(configKeys.REDIS_PASSWORD),
-			db: this.configService.get<string>(configKeys.REDIS_DB),
+			db: this.configService.get<number>(configKeys.REDIS_DB),
 			ex: this.configService.get(configKeys.REDIS_EX),
 		};
 	}
