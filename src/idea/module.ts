@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { IdeaController } from './idea.controller';
-import { IdeaService } from './idea.service';
+import { IdeaController } from './controller';
+import { IdeaService } from './service';
 
 @Module({
   controllers: [IdeaController],
