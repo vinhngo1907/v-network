@@ -1,10 +1,10 @@
 import { Global, Module } from '@nestjs/common';
-import { MongoDbDriverService } from './service';
+import { MongoDBService } from './service';
 
 @Global()
 @Module({
-  providers: [MongoDbDriverService],
-  exports: [MongoDbDriverService],
+  providers: [MongoDBService],
+  exports: [MongoDBService],
 })
 
 export class MongoDbDriverModule { }

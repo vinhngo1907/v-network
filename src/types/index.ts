@@ -6,6 +6,11 @@ export interface RedisConfig {
     ex: number;
 }
 
+export interface MongoConfig {
+    uri: string; // MongoDB connection URI
+    // Add more MongoDB configuration properties as needed
+}
+
 export interface HeaderConfig {
-    
+
 }
