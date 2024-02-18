@@ -5,4 +5,5 @@ import { RedisService } from 'src/redis/service';
   providers: [RedisService],
   exports: [RedisService],
 })
-export class RedisModule {}
+
+export class RedisModule { }
