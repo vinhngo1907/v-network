@@ -13,7 +13,9 @@ async function bootstrap() {
 			whitelist: true,
 		}),
 	);
+	
 	const appConfigService = app.get(AppConfigService);
+	
 	const logger = app.get(AppLoggerService);
 	app.useLogger(logger);
 
@@ -29,8 +31,8 @@ bootstrap();
 
 function setupSwagger(app: INestApplication) {
 	const config = new DocumentBuilder()
-		.setTitle('Book auth example')
-		.setDescription('The book auth API description')
+		.setTitle('Network auth example')
+		.setDescription('The network auth API description')
 		.setVersion('1.0')
 		.addTag('auth')
 		.build();

@@ -16,14 +16,14 @@ export class AppConfigService {
 			host: this.configService.get(configKeys.REDIS_HOST),
 			port: this.configService.get(configKeys.REDIS_PORT),
 			password: this.configService.get(configKeys.REDIS_PASSWORD),
-			db: this.configService.get<number>(configKeys.REDIS_DB),
+			db: this.configService.get(configKeys.REDIS_DB),
 			ex: this.configService.get(configKeys.REDIS_EX),
 		};
 	}
 
 	get mongoConfig(): MongoConfig {
 		return {
-			uri: this.configService.get(configKeys.MONGO_URI),
+			uri: this.configService.get(configKeys.MONGODB_URI),
 			// Add more MongoDB configuration properties as needed
 		};
 	}

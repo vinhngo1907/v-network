@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
-import { AppConfigService } from 'src/config/appConfigservice';
+import { AppConfigService } from 'src/config/appConfigService';
 import { AppLoggerService } from 'src/logger/service';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class RedisService {
             password: this.appConfig.redisConfig.password,
         });
 
-        this.logger.log("Redis connected")
+        this.logger.log(`Redis connected`);
     }
 
     async close() {
