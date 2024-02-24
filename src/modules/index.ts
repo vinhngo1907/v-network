@@ -1,19 +1,21 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 // import { IdeaModule } from 'src/idea/module';
-// import { DatabaseModule } from 'src/database';
-import { KafkaModule } from 'src/kafka/kafka.module';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-// import { HttpErrorFilter } from 'src/shared/http.error.filter';
-// import { LogginInterceptor } from 'src/shared/logging.interceptor';
+import { MongoDbDriverModule, RedisModule } from 'src/database';
 import { ConfigService } from '@nestjs/config';
 import { AppConfigService } from 'src/config/appConfigService';
+import { AppConfigMobule } from 'src/config/appConfigMobule';
+import { LoggerMiddleware } from 'src/logger/middleware';
 
 @Module({
-    imports: [KafkaModule],
+    imports: [MongoDbDriverModule, RedisModule, AppConfigMobule],
     controllers: [],
     providers: [
         ConfigService,
         AppConfigService
     ],
 })
-export class AppModule { }
+export class AppModule {
+	configure(consumer: MiddlewareConsumer) {
+		consumer.apply(LoggerMiddleware).forRoutes('*');
+	}
+}

@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { MongoClient } from 'mongodb';
-import { AppConfigService } from 'src/config/appConfigservice';
+import { ConfigService } from '@nestjs/config';
+import * as mongoose from 'mongoose';
 import { AppLoggerService } from 'src/logger/service';
 
 @Injectable()
 export class MongoDBService {
-    private client: MongoClient;
     private readonly logger: AppLoggerService;
+    private connection: mongoose.Connection;
 
-    constructor(private readonly appConfig: AppConfigService) {
+    constructor(private readonly configService: ConfigService) {
         this.logger = new AppLoggerService(MongoDBService.name);
     }
 
     async connect() {
         try {
-            this.client = await MongoClient.connect(this.appConfig.mongoConfig.uri, {
+            const uri = this.configService.get('MONGO_URI');
+            this.connection = await mongoose.createConnection(uri, {
                 // useNewUrlParser: true,
                 // useUnifiedTopology: true,
             });
@@ -26,11 +27,11 @@ export class MongoDBService {
     }
 
     async close() {
-        if (this.client) {
-            await this.client.close();
+        if (this.connection) {
+            await this.connection.close();
             this.logger.log('MongoDB connection closed');
         }
     }
 
-    // Add more methods for interacting with MongoDB here
+    // You can add more methods here for interacting with MongoDB
 }

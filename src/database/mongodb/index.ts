@@ -4,7 +4,6 @@ import { MongoDBService } from './service';
 @Global()
 @Module({
   providers: [MongoDBService],
-  exports: [MongoDBService],
+  exports: [MongoDBService], // Export MongoDBService and MongooseModule
 })
-
-export class MongoDbDriverModule { }
+export class MongoDbDriverModule {}
