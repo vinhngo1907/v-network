@@ -14,7 +14,7 @@ export class MongoDBService {
 
     async connect() {
         try {
-            const uri = this.configService.get('MONGO_URI');
+            const uri = this.configService.get('MONGODB_URI');
             this.connection = await mongoose.createConnection(uri, {
                 // useNewUrlParser: true,
                 // useUnifiedTopology: true,
