@@ -1,5 +1,4 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-// import { IdeaModule } from 'src/idea/module';
 import { MongoDbDriverModule, RedisModule } from 'src/database';
 import { ConfigService } from '@nestjs/config';
 import { AppConfigService } from 'src/config/appConfigService';
