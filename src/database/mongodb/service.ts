@@ -16,6 +16,7 @@ export class MongoDBService {
         try {
             const uri = this.configService.get('MONGODB_URI');
             this.connection = await mongoose.createConnection(uri, {
+                
                 // useNewUrlParser: true,
                 // useUnifiedTopology: true,
             });

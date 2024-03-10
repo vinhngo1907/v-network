@@ -4,6 +4,7 @@ import { AppModule } from './modules';
 import { AppConfigService } from 'src/config/appConfigService';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppLoggerService } from 'src/logger/service';
+import { MongoDBService } from './database/mongodb/service';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -15,7 +16,9 @@ async function bootstrap() {
 	);
 	
 	const appConfigService = app.get(AppConfigService);
-	
+	const mongoSerivce = app.get(MongoDBService);
+	mongoSerivce.connect();
+  
 	const logger = app.get(AppLoggerService);
 	app.useLogger(logger);
 
