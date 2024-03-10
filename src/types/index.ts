@@ -22,3 +22,8 @@ export interface HeaderConfig {
 
 }
 
+export type JsonObject = { [key: string]: any }
+
+
+
+export type IResponse = { statusCode: number, message: string }
