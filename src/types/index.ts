@@ -21,3 +21,4 @@ export interface InfluxConfig {
 export interface HeaderConfig {
 
 }
+
