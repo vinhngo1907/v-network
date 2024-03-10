@@ -10,4 +10,4 @@ import { ConfigModule } from '@nestjs/config';
   providers: [MongoDBService],
   exports: [MongoDBService], // Export MongoDBService and MongooseModule
 })
-export class MongoDbDriverModule {}
+export class MongoDbModule {}

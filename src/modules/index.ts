@@ -1,13 +1,11 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { MongoDbDriverModule, RedisModule } from 'src/database';
-import { ConfigService } from '@nestjs/config';
-import { AppConfigService } from 'src/config/appConfigService';
+import { MongoDbModule, RedisModule } from 'src/database';
 import { AppConfigMobule } from 'src/config/appConfigMobule';
 import { LoggerMiddleware } from 'src/logger/middleware';
 import { LoggerModule } from 'src/logger';
 
 @Module({
-    imports: [AppConfigMobule, LoggerModule, RedisModule, MongoDbDriverModule]
+    imports: [AppConfigMobule, LoggerModule, RedisModule, MongoDbModule]
 })
 export class AppModule {
 	configure(consumer: MiddlewareConsumer) {
