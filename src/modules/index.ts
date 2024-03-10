@@ -5,7 +5,9 @@ import { LoggerMiddleware } from 'src/logger/middleware';
 import { LoggerModule } from 'src/logger';
 
 @Module({
-    imports: [AppConfigMobule, LoggerModule, RedisModule, MongoDbModule]
+	imports: [AppConfigMobule, LoggerModule,
+		//  RedisModule,
+		MongoDbModule]
 })
 export class AppModule {
 	configure(consumer: MiddlewareConsumer) {
