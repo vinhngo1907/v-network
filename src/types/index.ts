@@ -44,3 +44,5 @@ export type TUserDeviceInfo = {
     name: string,
     location: string
 }
+
+export type HasOwner = 0 | 1;
