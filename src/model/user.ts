@@ -1,5 +1,4 @@
-// user.model.ts
-import { Schema, Document } from 'mongoose';
+import { Schema, Document, model } from 'mongoose';
 import { TUserDeviceInfo } from "src/types";
 
 export interface User extends Document {
@@ -20,7 +19,7 @@ export interface User extends Document {
     // Define other fields...
 }
 
-export const UserSchema = new Schema<User>({
+export const userSchema = new Schema<User>({
     img: String,
     bio: String,
     name: String,
@@ -36,3 +35,5 @@ export const UserSchema = new Schema<User>({
     twoStepVerification: Boolean
     // Define other fields...
 });
+
+export const UserModel = model<User>('User', userSchema);
