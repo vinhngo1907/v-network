@@ -9,7 +9,7 @@ export class AuthService{
         private readonly jwt: JwtService,
     ){}
 
-    async validateUser(username: string, pass: string):Promise<any>{
-        
+    async updateTwoStepVerificationState(userPhone: string, state: boolean):Promise<any>{
+        // await Update
     }
 }
