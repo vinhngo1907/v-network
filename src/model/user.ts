@@ -48,13 +48,22 @@ export interface Device extends Document {
     deviceLocation: String
 }
 
-const DeviceSchema: Schema = new Schema({
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
-    deviceIp: String,
-    createdAt: Date,
-    deviceName: String,
-    deviceLocation: String
-});
+const DeviceSchema: Schema = new Schema(
+    {
+        userId: { type: Schema.Types.ObjectId, ref: "User" },
+        deviceIp: String,
+        createdAt: Date,
+        deviceName: String,
+        deviceLocation: String
+    },
+    {
+        toJSON: {
+            transform(doc, ret) {
+                delete ret.__v
+            }
+        }
+    }
+);
 
 export const DeviceModel = model<Device>('device', DeviceSchema);
 
@@ -64,10 +73,20 @@ export interface UserBlockList extends Document {
     userTargetId: string;
 }
 
-const UserBlockListSchema: Schema = new Schema({
-    userId: { type: Schema.Types.ObjectId, ref: 'User' },
-    userTargetId: { type: Schema.Types.ObjectId, ref: 'User' },
-});
+const UserBlockListSchema: Schema = new Schema(
+    {
+        userId: { type: Schema.Types.ObjectId, ref: 'User' },
+        userTargetId: { type: Schema.Types.ObjectId, ref: 'User' },
+    },
+    {
+        toJSON: {
+            transform(doc, ret) {
+                delete ret.__v
+            }
+        }
+    }
+);
+
 export const UserBlockListModel = model<UserBlockList>('UserBlockList', UserBlockListSchema);
 
 // Define e2e content schema
@@ -82,7 +101,13 @@ export interface ListOfUserChannel extends Document {
 
 const ListOfUserChannelSchema: Schema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: "User" },
-    channelId: { type: Schema.Types.ObjectId, ref: "Channel" }
+    channelId: { type: Schema.Types.ObjectId, ref: "Channel" },
+}, {
+    toJSON: {
+        transform(doc, ret) {
+            delete ret.__v
+        }
+    }
 });
 
 export const ListOfUserChannelModel = model<ListOfUserChannel>('ListOfUserChannel', ListOfUserChannelSchema);
