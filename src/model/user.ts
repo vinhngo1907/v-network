@@ -111,3 +111,25 @@ const ListOfUserChannelSchema: Schema = new Schema({
 });
 
 export const ListOfUserChannelModel = model<ListOfUserChannel>('ListOfUserChannel', ListOfUserChannelSchema);
+
+export interface ListOfUserChannel extends Document {
+    toUser: String,
+    fromUser: String,
+    userId: String,
+    tblChatId: String
+}
+
+const ListOfUserE2ESchema: Schema = new Schema({
+    toUser: String,
+    fromUser: String,
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    tblChatId: String
+}, {
+    toJSON: {
+        transform(doc, ret) {
+            delete ret.__v
+        }
+    }
+});
+
+export const ListOfUserE2EModel = model<ListOfUserChannel>('ListOfUserChannel', ListOfUserE2ESchema);
