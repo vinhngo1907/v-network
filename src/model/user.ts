@@ -1,5 +1,6 @@
 import { Schema, Document, model } from 'mongoose';
 import { TUserDeviceInfo } from "src/types";
+import { createCollection } from './schema';
 
 export interface User extends Document {
     img: string;
@@ -40,11 +41,19 @@ export const UserModel = model<User>('user', UserSchema);
 
 // Define other schemas similarly
 export interface Device extends Document {
-    // Define device properties
+    userId: String,
+    deviceIp: String,
+    createdAt: Date,
+    deviceName: String,
+    deviceLocation: String
 }
 
 const DeviceSchema: Schema = new Schema({
-    // Define schema fields
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    deviceIp: String,
+    createdAt: Date,
+    deviceName: String,
+    deviceLocation: String
 });
 
 export const DeviceModel = model<Device>('device', DeviceSchema);
@@ -60,3 +69,20 @@ const UserBlockListSchema: Schema = new Schema({
     userTargetId: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 export const UserBlockListModel = model<UserBlockList>('UserBlockList', UserBlockListSchema);
+
+// Define e2e content schema
+export const e2eContent = (tableName: string) => {
+    createCollection(tableName);
+};
+
+export interface ListOfUserChannel extends Document {
+    userId: String,
+    channelId: String,
+}
+
+const ListOfUserChannelSchema: Schema = new Schema({
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    channelId: { type: Schema.Types.ObjectId, ref: "Channel" }
+});
+
+export const ListOfUserChannelModel = model<ListOfUserChannel>('ListOfUserChannel', ListOfUserChannelSchema);
