@@ -19,7 +19,7 @@ export interface User extends Document {
     // Define other fields...
 }
 
-export const userSchema = new Schema<User>({
+export const UserSchema = new Schema<User>({
     img: String,
     bio: String,
     name: String,
@@ -36,4 +36,27 @@ export const userSchema = new Schema<User>({
     // Define other fields...
 });
 
-export const UserModel = model<User>('User', userSchema);
+export const UserModel = model<User>('user', UserSchema);
+
+// Define other schemas similarly
+export interface Device extends Document {
+    // Define device properties
+}
+
+const DeviceSchema: Schema = new Schema({
+    // Define schema fields
+});
+
+export const DeviceModel = model<Device>('device', DeviceSchema);
+
+// Define user block list schema
+export interface UserBlockList extends Document {
+    userId: string;
+    userTargetId: string;
+}
+
+const UserBlockListSchema: Schema = new Schema({
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
+    userTargetId: { type: Schema.Types.ObjectId, ref: 'User' },
+});
+export const UserBlockListModel = model<UserBlockList>('UserBlockList', UserBlockListSchema);
