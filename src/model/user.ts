@@ -50,7 +50,7 @@ export interface Device extends Document {
 
 const DeviceSchema: Schema = new Schema(
     {
-        userId: { type: Schema.Types.ObjectId, ref: "User" },
+        userId: { type: Schema.Types.ObjectId, ref: "user" },
         deviceIp: String,
         createdAt: Date,
         deviceName: String,
@@ -75,8 +75,8 @@ export interface UserBlockList extends Document {
 
 const UserBlockListSchema: Schema = new Schema(
     {
-        userId: { type: Schema.Types.ObjectId, ref: 'User' },
-        userTargetId: { type: Schema.Types.ObjectId, ref: 'User' },
+        userId: { type: Schema.Types.ObjectId, ref: 'user' },
+        userTargetId: { type: Schema.Types.ObjectId, ref: 'user' },
     },
     {
         toJSON: {
@@ -87,7 +87,7 @@ const UserBlockListSchema: Schema = new Schema(
     }
 );
 
-export const UserBlockListModel = model<UserBlockList>('UserBlockList', UserBlockListSchema);
+export const UserBlockListModel = model<UserBlockList>('userBlockList', UserBlockListSchema);
 
 // Define e2e content schema
 export const e2eContent = (tableName: string) => {
@@ -100,8 +100,8 @@ export interface ListOfUserChannel extends Document {
 }
 
 const ListOfUserChannelSchema: Schema = new Schema({
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
-    channelId: { type: Schema.Types.ObjectId, ref: "Channel" },
+    userId: { type: Schema.Types.ObjectId, ref: "user" },
+    channelId: { type: Schema.Types.ObjectId, ref: "channel" },
 }, {
     toJSON: {
         transform(doc, ret) {
@@ -110,7 +110,7 @@ const ListOfUserChannelSchema: Schema = new Schema({
     }
 });
 
-export const ListOfUserChannelModel = model<ListOfUserChannel>('ListOfUserChannel', ListOfUserChannelSchema);
+export const ListOfUserChannelModel = model<ListOfUserChannel>('listOfUserChannel', ListOfUserChannelSchema);
 
 export interface ListOfUserChannel extends Document {
     toUser: String,
@@ -122,7 +122,7 @@ export interface ListOfUserChannel extends Document {
 const ListOfUserE2ESchema: Schema = new Schema({
     toUser: String,
     fromUser: String,
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    userId: { type: Schema.Types.ObjectId, ref: "user" },
     tblChatId: String
 }, {
     toJSON: {
@@ -132,4 +132,4 @@ const ListOfUserE2ESchema: Schema = new Schema({
     }
 });
 
-export const ListOfUserE2EModel = model<ListOfUserChannel>('ListOfUserChannel', ListOfUserE2ESchema);
+export const ListOfUserE2EModel = model<ListOfUserChannel>('listOfUserChannel', ListOfUserE2ESchema);
