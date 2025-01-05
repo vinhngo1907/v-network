@@ -1,11 +1,11 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { MongoDbModule, RedisModule } from 'src/database';
-import { AppConfigMobule } from 'src/config/appConfigMobule';
+import { AppConfigModule } from 'src/config';
 import { LoggerMiddleware } from 'src/logger/middleware';
 import { LoggerModule } from 'src/logger';
 
 @Module({
-	imports: [AppConfigMobule, LoggerModule,
+	imports: [AppConfigModule, LoggerModule,
 		//  RedisModule,
 		MongoDbModule]
 })
