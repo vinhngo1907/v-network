@@ -49,4 +49,16 @@ export class AppConfigService {
 			bucket: this.configService.get(configKeys.INFLUX_DB_BUCKET),
 		};
 	}
+
+	public getJwtConfig(): JWT_CONFIG {
+		const secret = this.getValue(configKeys['JWT_SECRET'])
+		const expiresIn = this.getValue(configKeys['JWT_EXPIRATION']);
+		console.log(`JWT Config - Secret: ${secret}, Expires In: ${expiresIn}`);
+		return {
+			secret: `${secret}`,
+			signOptions: {
+				expiresIn: `${expiresIn}s`,
+			}
+		}
+	}
 }
