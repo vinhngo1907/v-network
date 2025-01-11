@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { MongoDBService } from './service';
-import { AppConfigMobule } from 'src/config/appConfigMobule';
-import { AppConfigService } from 'src/config/appConfigService';
+import { AppConfigModule } from 'src/config/';
+import { AppConfigService } from 'src/config/service';
 import { ConfigModule } from '@nestjs/config';
 
 @Global()

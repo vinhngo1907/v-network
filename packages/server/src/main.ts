@@ -1,7 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules';
-import { AppConfigService } from 'src/config/appConfigService';
+import { AppConfigService } from 'src/config/service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppLoggerService } from 'src/logger/service';
 import { MongoDBService } from './database/mongodb/service';
