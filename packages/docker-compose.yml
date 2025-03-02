@@ -1,0 +1,117 @@
+version: '3.9'
+
+services:
+  kafka:
+    container_name: kafka_micro
+    image: 'bitnami/kafka:latest'
+    env_file:
+      - .env
+    ports:
+      - '${KAFKA_PORT}:9092'
+    volumes:
+      - kafka_data:${KAFKA_DATA}
+    networks:
+      - micro_network
+    restart: always
+    environment:
+      - BITNAMI_DEBUG=true
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=INTERNAL
+      - KAFKA_CFG_LISTENERS=CLIENT://:9092,INTERNAL://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://127.0.0.1:9092
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@:9093
+      - KAFKA_INTER_BROKER_USER=${KAFKA_USER}
+      - KAFKA_INTER_BROKER_PASSWORD=${KAFKA_PASS}
+      - KAFKA_CLIENT_USERS=${KAFKA_USER}
+      - KAFKA_CLIENT_PASSWORDS=${KAFKA_PASS}
+      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN
+      - KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN
+      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
+  
+  mongo:
+    container_name: network_mongo
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data/mongo:/data/db
+  
+  postgres:
+    image: postgres:12
+    container_name: postgres_container
+    env_file: 
+      - .env
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    restart: always
+    networks:
+      - common
+    volumes:
+      - postgres_data:${PGDATA}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+  
+  influxdb:
+    image: influxdb
+    container_name: network_influxdb
+    restart: always
+    ports:
+      - '8086:8086'
+    volumes:
+      - influxdb:/var/lib/influxdb
+  
+  redis:
+    image: redis
+    container_name: network_redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis:/var/lib/redis
+  
+  src:
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: src
+    image: social_network
+    depends_on:
+      - mongo
+      - redis
+      - influxdb
+    links:
+      - redis
+      - mongo
+      - influxdb
+    ports:
+      - '3000:3000'
+      - '4000:4000'
+      - '17892:17892'
+    volumes:
+      - ./:/src/
+  
+  # krakend:
+  #   image: devopsfaith/krakend:latest
+  #   restart: unless-stopped
+  #   container_name: krakend
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - ./krakend/
+
+volumes:
+  mongo:
+    driver: local
+  redis:
+    driver: local
+  influxdb:
+    driver: local
