@@ -4,7 +4,7 @@ import { AppConfigModule } from 'src/config';
 import { LoggerMiddleware } from 'src/common/logger/middleware';
 import { LoggerModule } from 'src/common/logger';
 import { PostModule } from './post';
-import { CommentModule } from 'src/comment/comment.module';
+import { CommentModule } from 'src/modules/comment/';
 
 @Module({
 	imports: [
