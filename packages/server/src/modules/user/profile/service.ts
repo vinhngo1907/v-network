@@ -3,7 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { UserDTO } from './dto';
 // import { DatabaseService } from 'src/database';
 import { from, of } from 'rxjs';
-import { KafkaService } from 'src/kafka/kafka.service';
+import { KafkaService } from 'src/kafka/service';
 import * as jwt from "jsonwebtoken";
 // import bcrypt from 'bcrypt'
 const bcrypt = require("bcrypt");

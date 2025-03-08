@@ -3,8 +3,8 @@ import { UserService } from './service';
 import { UserController } from './controller';
 import { HttpModule } from '@nestjs/axios';
 // import { MongoDbModule } from 'src/database';
-import { KafkaModule } from 'src/kafka/kafka.module';
-import { KafkaService } from 'src/kafka/kafka.service';
+import { KafkaModule } from 'src/kafka';
+import { KafkaService } from 'src/kafka/service';
 
 @Module({
   imports: [

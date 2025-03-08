@@ -1,7 +1,7 @@
 import { Controller, Inject, UseGuards, Get, Post, UsePipes, Body, Param, Put, Delete, Patch, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { from, map, of, switchMap } from 'rxjs';
-import { KafkaService } from 'src/kafka/kafka.service';
+import { KafkaService } from 'src/kafka/service';
 import { AuthGuard } from '../gen/auth.guard';;
 import { UserDTO } from './dto';
 import { UserService } from './service';
