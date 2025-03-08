@@ -16,25 +16,25 @@ export class DatabaseService extends PrismaClient {
         this.logger.log("Prisma connected");
     }
 
-    async enableShutdownHooks(app: INestApplication) {
-        this.$on('beforeExit', async () => {
-            await app.close();
-            this.logger.log('Primsa disconnected');
-        });
-    }
+    // async enableShutdownHooks(app: INestApplication) {
+    //     this.$on('beforeExit', async () => {
+    //         await app.close();
+    //         this.logger.log('Primsa disconnected');
+    //     });
+    // }
 
     async close() {
         await this.$disconnect();
     }
 
-    // async dropDatabase() {
-    //     if (process.env.NODE_ENV === 'production') {
-    //         throw new Error('Cannot drop database in production');
-    //     }
+    async dropDatabase() {
+        if (process.env.NODE_ENV === 'production') {
+            throw new Error('Cannot drop database in production');
+        }
 
-    //     const modelKeys = Prisma.dmmf.datamodel.models.map((m) => m.name);
-    //     return Promise.all(
-    //         modelKeys.map((modelName: any) => (this[camelCase(modelName)] as any).deleteMany()),
-    //     );
-    // }
+        const modelKeys = Prisma.dmmf.datamodel.models.map((m) => m.name);
+        return Promise.all(
+            modelKeys.map((modelName: any) => (this[camelCase(modelName)] as any).deleteMany()),
+        );
+    }
 }

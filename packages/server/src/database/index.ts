@@ -15,5 +15,4 @@
 // 	],
 // })
 // export class DatabaseModule { }
-export * from "./mongodb";
-export * from "./redis";
+// export * from "./mongodb";

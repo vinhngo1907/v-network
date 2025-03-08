@@ -1,11 +1,12 @@
 import { HttpException, Logger, MiddlewareConsumer, Module } from '@nestjs/common';
-import { MongoDbModule, RedisModule } from 'src/database';
+// import { MongoDbModule, RedisModule } from 'src/database';
 import { AppConfigModule } from 'src/config';
 import { LoggerMiddleware } from 'src/common/logger/middleware';
 import { LoggerModule } from 'src/common/logger';
 import { PostModule } from './post';
 import { CommentModule } from 'src/modules/comment/';
 import { APP_FILTER } from '@nestjs/core';
+import { DatabaseModule } from './database';
 
 @Module({
 	imports: [
@@ -13,7 +14,8 @@ import { APP_FILTER } from '@nestjs/core';
 		PostModule,
 		CommentModule,
 		//  RedisModule,
-		MongoDbModule
+		// MongoDbModule,
+		DatabaseModule
 	],
 	providers: [
 		Logger,
