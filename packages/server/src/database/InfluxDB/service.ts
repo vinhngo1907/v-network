@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InfluxDB, Point, WriteApi } from '@influxdata/influxdb-client';
 import { AppConfigService } from 'src/config/service';
-import { AppLoggerService } from 'src/logger/service';
+import { AppLoggerService } from 'src/common/logger/service';
 
 @Injectable()
 export class InfluxDBService {

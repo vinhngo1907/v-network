@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as mongoose from 'mongoose';
-import { AppLoggerService } from 'src/logger/service';
+import { AppLoggerService } from 'src/common/logger/service';
 
 @Injectable()
 export class MongoDBService {

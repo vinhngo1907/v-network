@@ -61,4 +61,8 @@ export class AppConfigService {
 			}
 		}
 	}
+	
+	public getClientUrl(): string {
+		return this.configService.get(configKeys.HEADER_IS_ADMIN)
+	}
 }
