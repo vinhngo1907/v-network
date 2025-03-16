@@ -19,7 +19,7 @@ export class KafkaController implements OnModuleInit {
             password: this.configService.get<string>('KAFKA_PASS'),
         } as any,
     });
-    
+
     async onModuleInit() {
         try {
 
