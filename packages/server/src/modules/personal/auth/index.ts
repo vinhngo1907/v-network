@@ -1,4 +1,4 @@
-import { Logger, Module } from "@nestjs/common";
+import { Global, Logger, Module } from "@nestjs/common";
 import { AuthController } from "./controller";
 import { AuthService } from "./service";
 import { DatabaseService } from "@modules/database/service";
@@ -8,6 +8,7 @@ import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 
+@Global()
 @Module({
 	imports: [
 		// TypeOrmModule.forFeature([Role, Account]),
@@ -17,16 +18,17 @@ import { PassportModule } from "@nestjs/passport";
 		JwtModule.registerAsync({
 			useFactory: async (appConfig: AppConfigService) => appConfig.getJwtConfig(),
 			inject: [AppConfigService]
-		})],
+		})
+	],
 	controllers: [AuthController],
 	providers: [
 		DatabaseService,
 		AuthService,
 		AppConfigService,
 		ConfigService,
+		Logger,
 		// LocalStrategy,
 		// JwtStrategy,
-		Logger,
 		// {
 		//   provide: APP_GUARD,
 		//   useClass: RolesGuard,

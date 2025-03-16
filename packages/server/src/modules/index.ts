@@ -8,6 +8,7 @@ import { CommentModule } from 'src/modules/comment/';
 import { APP_FILTER } from '@nestjs/core';
 import { DatabaseModule } from './database';
 import { PersonalModule } from './personal';
+import { HttpExceptionFilter } from '@common/infras/http-exception.filter';
 
 @Module({
 	imports: [
@@ -17,13 +18,13 @@ import { PersonalModule } from './personal';
 		//  RedisModule,
 		// MongoDbModule,
 		DatabaseModule,
-		PersonalModule
+		PersonalModule,
 	],
 	providers: [
 		Logger,
 		{
 			provide: APP_FILTER,
-			useClass: HttpException
+			useClass: HttpExceptionFilter
 		}
 	]
 })

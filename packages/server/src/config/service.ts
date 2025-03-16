@@ -5,12 +5,14 @@ import { HeaderConfig, InfluxConfig, MongoConfig, RedisConfig } from 'src/types'
 
 @Injectable()
 export class AppConfigService {
-	constructor(private readonly configService: ConfigService) { }
+	constructor(
+		private readonly configService: ConfigService
+	) { }
 
 	private getValue(key: string, throwOnMissing = true): string {
 		const value = this.configService.get(configKeys[key]);
 		if (!value && throwOnMissing) {
-			throw new Error(`Config error = missing env.${key}`)
+			throw new Error(`Config error = missing env.${key}`);
 		}
 
 		return value;
