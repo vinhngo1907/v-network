@@ -6,13 +6,14 @@ import { APP_GUARD } from "@nestjs/core";
 import { AppConfigService } from "@config/service";
 import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
 
 @Module({
 	imports: [
 		// TypeOrmModule.forFeature([Role, Account]),
 		// AccountModule,
 		// UserModule,
-		// PassportModule,
+		PassportModule,
 		JwtModule.registerAsync({
 			useFactory: async (appConfig: AppConfigService) => appConfig.getJwtConfig(),
 			inject: [AppConfigService]
