@@ -7,6 +7,7 @@ import { PostModule } from './post';
 import { CommentModule } from 'src/modules/comment/';
 import { APP_FILTER } from '@nestjs/core';
 import { DatabaseModule } from './database';
+import { PersonalModule } from './personal';
 
 @Module({
 	imports: [
@@ -15,7 +16,8 @@ import { DatabaseModule } from './database';
 		CommentModule,
 		//  RedisModule,
 		// MongoDbModule,
-		DatabaseModule
+		DatabaseModule,
+		PersonalModule
 	],
 	providers: [
 		Logger,
