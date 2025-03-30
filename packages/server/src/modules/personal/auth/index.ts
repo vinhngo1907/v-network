@@ -7,6 +7,7 @@ import { AppConfigService } from "@config/service";
 import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
+import { UserService } from "../user/service";
 
 @Global()
 @Module({
@@ -27,6 +28,7 @@ import { PassportModule } from "@nestjs/passport";
 		AppConfigService,
 		ConfigService,
 		Logger,
+		UserService
 		// LocalStrategy,
 		// JwtStrategy,
 		// {
