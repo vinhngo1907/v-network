@@ -1,6 +1,6 @@
 import { Controller, Injectable, Post, Req, Res, Get, HttpCode } from "@nestjs/common";
 import { AuthService } from "./service";
-import RequestWithAccount from "./RequestWithAccount";
+import RequestWithAccount from "./interfaces/RequestWithAccount";
 import { Response } from 'express';
 import { ApiTags } from "@nestjs/swagger";
 @Injectable()
