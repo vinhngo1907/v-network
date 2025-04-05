@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { configKeys } from 'src/config/constants';
+import { configKeys } from './constants'; 
 import { HeaderConfig, InfluxConfig, MongoConfig, RedisConfig } from 'src/types';
 
 @Injectable()
@@ -71,5 +71,10 @@ export class AppConfigService {
 	public isProduction() {
 		const mode = this.getValue(configKeys.MODE, false);
 		return mode != 'DEV';
+	}
+
+	public getAdminPassword(): string {
+		// return this.getValue('ADMIN_PASSWORD');
+		return this.configService.get(configKeys.ADMIN_PASSWORD);
 	}
 }
