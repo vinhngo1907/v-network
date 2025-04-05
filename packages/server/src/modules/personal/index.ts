@@ -1,9 +1,10 @@
-import { Module } from "@nestjs/common";
+import { Logger, Module } from "@nestjs/common";
 import { AuthModule } from "./auth";
 import { AccountModule } from "./account";
 import { AuthService } from "./auth/service";
 import { AccountService } from "./account/service";
 import { UserModule } from "./user";
+import { BcryptService } from "@modules/bcrypt/service";
 
 @Module({
     imports: [
@@ -13,7 +14,9 @@ import { UserModule } from "./user";
     ],
     providers: [
         AuthService,
-        AccountService
+        AccountService,
+        BcryptService,
+        Logger
     ]
 })
 export class PersonalModule{}
