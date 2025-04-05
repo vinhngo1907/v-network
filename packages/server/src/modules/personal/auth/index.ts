@@ -8,6 +8,7 @@ import { ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { UserService } from "../user/service";
+import { BcryptService } from "@modules/bcrypt/service";
 
 @Global()
 @Module({
@@ -28,7 +29,8 @@ import { UserService } from "../user/service";
 		AppConfigService,
 		ConfigService,
 		Logger,
-		UserService
+		UserService,
+		BcryptService
 		// LocalStrategy,
 		// JwtStrategy,
 		// {
