@@ -3,8 +3,6 @@ import { UserController } from './controller';
 import { UserService } from './service';
 import { DatabaseService } from '@modules/database/service';
 
-
-
 @Global()
 @Module({
     controllers: [UserController],
