@@ -16,6 +16,11 @@ export class AuthController {
         return res.send({ "Success": true, message: "Success" });
     }
 
+    @Post("register")
+    async register(){
+        
+    }
+
     @Get("isLoggedIn")
     isLoggedIn(@Res() res: Response) {
         return res.send({ "Success": true, message: "Success" });

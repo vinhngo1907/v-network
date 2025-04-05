@@ -6,14 +6,4 @@ export class AccountController {
     constructor(
         private readonly accountService: AccountService
     ) {}
-
-    @Post("login")
-    async login(){
-        
-    }
-
-    @Post("register")
-    async register(){
-        
-    }
 }
