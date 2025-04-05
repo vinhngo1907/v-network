@@ -8,6 +8,8 @@ import { RegisterPayload } from "./types";
 import ValidationUtils from "@common/utils/validate";
 import { AuthBadRequestException } from "./exception";
 import { BcryptService } from "@modules/bcrypt/service";
+import { AccountBadRequestException } from "../account/exception";
+
 @Injectable()
 export class AuthService {
     private readonly logger = new AppLoggerService(AuthService.name);
@@ -31,20 +33,43 @@ export class AuthService {
         username, account, fullName, password: rawPass
     }: RegisterPayload): Promise<any> {
         try {
-            if(ValidationUtils.validateEmail(account)){
+            if (ValidationUtils.validateEmail(account)) {
                 const checkUser = ValidationUtils.validateRegister({
                     username, account
                 });
 
-                if(checkUser){
+                if (checkUser) {
                     throw new AuthBadRequestException(checkUser);
                 }
 
+                const newUserName = username.toLowerCase().replace(/ /g, '');
+                const checkUsernameExisted = await this.databaseService.account.findUnique({
+                    where: {
+                        username: newUserName
+                    }
+                });
+
+                if (checkUsernameExisted) {
+                    throw new AccountBadRequestException("Username is existed");
+                }
+
+                await this.userService.checkEmailExisted(account);
+
                 const hashedPassword = await this.bryptService.hashString(rawPass);
-                // this.databaseService.user
+                const userRole = await this.databaseService.role.findFirstOrThrow({
+                    where: {
+                        name: "USER"
+                    }
+                });
+
+                return await this.databaseService.$transaction(async (manager) => {
+                    const createdUser = await this.userService.createUserTransaction(
+                        manager, username, account, hashedPassword, fullName, [userRole]
+                    )
+                });
             }
 
-            if(ValidationUtils.validateMobile(account)) {
+            if (ValidationUtils.validateMobile(account)) {
 
             }
 

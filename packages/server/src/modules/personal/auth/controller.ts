@@ -1,8 +1,9 @@
-import { Controller, Injectable, Post, Req, Res, Get, HttpCode } from "@nestjs/common";
+import { Controller, Injectable, Post, Req, Res, Get, HttpCode, Body } from "@nestjs/common";
 import { AuthService } from "./service";
 import RequestWithAccount from "./interfaces/RequestWithAccount";
 import { Response } from 'express';
 import { ApiTags } from "@nestjs/swagger";
+import { RegisterPayload } from "./types";
 @Injectable()
 @ApiTags("Auth")
 @Controller("auth")
@@ -17,8 +18,8 @@ export class AuthController {
     }
 
     @Post("register")
-    async register(){
-        
+    async register(@Body() registerPayload: RegisterPayload,  @Res() res: Response){
+        return this.authService.register(registerPayload);
     }
 
     @Get("isLoggedIn")
