@@ -4,7 +4,7 @@ import { JwtService } from "@nestjs/jwt";
 import { AppLoggerService } from "src/common/logger/service";
 import { UserService } from "../user/service";
 import { AppConfigService } from "@config/service";
-import { RegisterPayload } from "./types";
+import { RegisterPayload, TokenPayload } from "./types";
 import ValidationUtils from "@common/utils/validate";
 import { AuthBadRequestException } from "./exception";
 import { BcryptService } from "@modules/bcrypt/service";
@@ -23,10 +23,6 @@ export class AuthService {
 
     async updateTwoStepVerificationState(userPhone: string, state: boolean): Promise<any> {
         // await Update
-    }
-
-    async login() {
-
     }
 
     async register({
@@ -66,6 +62,16 @@ export class AuthService {
                     const createdUser = await this.userService.createUserTransaction(
                         manager, username, account, hashedPassword, fullName, [userRole]
                     )
+
+                    return this.login({
+                        username,
+                        user: {
+                            userId: createdUser.id,
+                            email: account,
+                            fullName
+                        }
+                    })
+
                 });
             }
 
@@ -74,6 +80,40 @@ export class AuthService {
             }
 
         } catch (error: any) {
+            this.logger.error(error);
+            throw new InternalServerErrorException(error);
+        }
+    }
+
+    async login(account: any) {
+        try {
+            const { username, user: { userId, email, fullName } } = account;
+            const cookie = this.getCookieWithJwtToken(username, userId);
+            return {
+                cookie,
+                user:{
+                    id: userId,
+                    email, username, fullName
+                }
+            }
+        } catch (error) {
+            this.logger.error(error);
+            throw new InternalServerErrorException(`Error when logining: ${error}`);
+        }
+    }
+
+    getCookieWithJwtToken(username: string, userId: string) {
+        try {
+            const payload: TokenPayload = { username, userId };
+
+            const {
+                secret,
+                signOptions: { expiresIn },
+            } = this.appConfigService.getJwtConfig();
+
+            const token = this.jwt.sign(payload);
+            return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${expiresIn};SameSite=None; Secure`;
+        } catch (error) {
             this.logger.error(error);
             throw new InternalServerErrorException(error);
         }

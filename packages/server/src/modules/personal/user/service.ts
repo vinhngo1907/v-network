@@ -44,7 +44,7 @@ export class UserService {
 
         const newUser = await this.databaseService.user.create({
             data: {
-                fullName, username, email,
+                fullName, email,
                 account: {
                     connect: { id: newAccount.id }
                 },

@@ -13,3 +13,15 @@ export class RegisterPayload {
     @ApiProperty()
     password: string;
 }
+
+export enum Role {
+    User = "USER",
+    Admin = "ADMIN",
+    Supporter = "SUPPORTER",
+    Mod = "MOD"
+}
+
+export interface TokenPayload {
+    username: string;
+    userId: string;
+}
