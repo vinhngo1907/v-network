@@ -14,14 +14,14 @@ export class AuthController {
     ) { }
 
     @Post("login")
+    @UseGuards(LocalAuthGuard) 
     async login(@Req() req: RequestWithAccount, @Res() res: Response) {
         return res.send({ "Success": true, message: "Success" });
     }
 
-    // @UseGuards(LocalAuthGuard)
     @Post("signin")
-    async signIn(@Body() payload: any){
-        return await this.authService.signIn(payload);
+    async signIn(@Body() payload: any, @Res() res: Response){
+        return await this.authService.signIn(payload, res);
     }
 
     @Post("register")

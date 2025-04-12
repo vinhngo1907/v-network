@@ -9,7 +9,7 @@ import ValidationUtils from "@common/utils/validate";
 import { AuthBadRequestException } from "./exception";
 import { BcryptService } from "@modules/bcrypt/service";
 import { AccountBadRequestException } from "../account/exception";
-import { Request } from "express";
+import { Request, Response } from "express";
 
 @Injectable()
 export class AuthService {
@@ -103,7 +103,7 @@ export class AuthService {
         }
     }
 
-    async signIn(payload: any) {
+    async signIn(payload: any, res: Response) {
         try {
             const { account, password } = payload;
             const user = await this.databaseService.account.findUnique({
@@ -114,12 +114,36 @@ export class AuthService {
                     user: true,
                 }
             });
-            console.log({user});
-            if(user) {
-                const isMatch = this.bryptService.isEqual(password, user.password)
-                return user;
+
+            if (!user) {
+                throw new AuthBadRequestException("User not found or not authorized");
             }
-            return user;
+
+            if (account.type !== "register") {
+                throw new AuthBadRequestException(`Quick login account with ${user.type} can't use this function.`);
+            }
+
+            const isMatch = await this.bryptService.isEqual(password, user.password);
+            if (!isMatch) {
+                throw new AuthBadRequestException("Password is not correct");
+            }
+
+            const tokenPayload: TokenPayload = { username: user.username, userId: user.id }
+            const accessToken = this.jwtService.sign(tokenPayload);
+            res.cookie("refreshToken", accessToken, {
+                httpOnly: true,
+                path: '/auth/refresh-token',
+                maxAge: 30 * 24 * 60 * 60 * 1000 // 30days
+            });
+            
+            delete user.password;
+            delete user.rfToken;
+
+            return {
+                accessToken,
+                account
+            }
+
         } catch (error) {
             this.logger.error(error);
             throw new InternalServerErrorException(`Error when logining: ${error}`);
