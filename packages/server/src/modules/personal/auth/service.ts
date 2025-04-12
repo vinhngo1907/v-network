@@ -134,11 +134,20 @@ export class AuthService {
             const accessToken = this.jwtService.sign(tokenPayload, {
                 secret: accessTokenSecret, expiresIn: '1d'
             });
-            
+
             const refreshToken = this.jwtService.sign(tokenPayload, {
                 secret: refreshTokenSecret, expiresIn: '7d'
-            })
-            res.cookie("refreshToken", accessToken, {
+            });
+            await this.databaseService.account.update({
+                where:{
+                    id: user.id, 
+                },
+                data: {
+                    rfToken: refreshToken
+                }
+            });
+            
+            res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
                 path: '/auth/refresh-token',
                 maxAge: 30 * 24 * 60 * 60 * 1000 // 30days
