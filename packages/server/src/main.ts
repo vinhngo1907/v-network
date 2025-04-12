@@ -16,7 +16,6 @@ import * as cookieParser from 'cookie-parser';
 import { ResponseAddAccessTokenToHeaderInterceptor } from './common/interceptors/responseWithAllowOriginInterceptor';
 
 async function bootstrap() {
-	try{
 	const app = await NestFactory.create(AppModule, {
 		logger: WinstonModule.createLogger({
 			level: process.env.LOG_LEVEL || 'info',
@@ -94,9 +93,6 @@ async function bootstrap() {
 	});
 
 	// await prismaSerivce.enableShutdownHooks(app);
-}catch(error){
-	console.error('❌ Error during bootstrap:', error);
-}
 }
 
 bootstrap();

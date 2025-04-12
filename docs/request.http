@@ -1,4 +1,4 @@
-@serverUrl = http://localhost:3001/api
+@serverUrl = http://localhost:3001
 @adminUrl = http://localhost:3000/api
 
 GET {{serverUrl}}
@@ -20,6 +20,15 @@ Content-Type: application/json
 }
 ###
 
+POST {{serverUrl}}/auth/signin
+Content-Type: application/json
+
+{
+  "account": "vinhtrungngo1907@gmail.com",
+  "password": "123456"
+}
+###
+
 PUT {{serverUrl}}/update/2
 Content-Type: application/json
 
@@ -27,3 +36,6 @@ Content-Type: application/json
   "email":"vinhtrungngo@gmail.com",
   "fullname":"Koo kuu"
 }
+
+###
+GET {{serverUrl}}/notify/hello
