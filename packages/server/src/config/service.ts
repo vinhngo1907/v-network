@@ -77,4 +77,16 @@ export class AppConfigService {
 		// return this.getValue('ADMIN_PASSWORD');
 		return this.configService.get(configKeys.ADMIN_PASSWORD);
 	}
+
+	public getJwtSecrets() {
+		return {
+			accessTokenSecret: this.getValue(configKeys['ACCESS_TOKEN_SECRET']),
+			refreshTokenSecret: this.getValue(configKeys['REFRESH_TOKEN_SECRET']),
+			activeTokenSecret: this.getValue(configKeys['ACTIVE_TOKEN_SECRET'])
+		}
+	}
+
+	public getRfPath() {
+		return this.getValue(configKeys['RF_PATH'])
+	}
 }

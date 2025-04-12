@@ -26,16 +26,32 @@ model Mod {
 }
 
 model Account {
-    id          String   @id @default(uuid())
-    username    String   @unique @db.VarChar(20)
-    password    String   @db.VarChar(200)
-    isActivated Boolean  @default(true)
+    id          String      @id @default(uuid())
+    username    String      @unique @db.VarChar(20)
+    password    String      @db.VarChar(200)
+    isActivated Boolean     @default(true)
     user        User?
-    userId      String?  @db.Uuid
-    createdAt   DateTime @default(now())
-    createdBy   String   @default("system")
-    updatedAt   DateTime @updatedAt
-    updatedBy   String   @default("system")
+    userId      String?     @db.Uuid
+    createdAt   DateTime    @default(now())
+    createdBy   String      @default("system")
+    updatedAt   DateTime    @updatedAt
+    updatedBy   String      @default("system")
+    rfToken     String      @db.VarChar(255)
+    type        AccountType @default(REGISTER)
+}
+
+enum AccountStatus {
+    NEW
+    VERIFIED
+    BANNED
+    DISABLED
+    PUBLISHED
+}
+
+enum AccountType {
+    REGISTER
+    GOOGLE
+    FACEBOOK
 }
 
 model User {

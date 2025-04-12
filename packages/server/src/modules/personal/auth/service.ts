@@ -1,5 +1,5 @@
 import { DatabaseService } from "@modules/database/service";
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AppLoggerService } from "src/common/logger/service";
 import { UserService } from "../user/service";
@@ -9,12 +9,13 @@ import ValidationUtils from "@common/utils/validate";
 import { AuthBadRequestException } from "./exception";
 import { BcryptService } from "@modules/bcrypt/service";
 import { AccountBadRequestException } from "../account/exception";
+import { Request } from "express";
 
 @Injectable()
 export class AuthService {
     private readonly logger = new AppLoggerService(AuthService.name);
     constructor(
-        private readonly jwt: JwtService,
+        private readonly jwtService: JwtService,
         private databaseService: DatabaseService,
         private userService: UserService,
         private appConfigService: AppConfigService,
@@ -91,7 +92,7 @@ export class AuthService {
             const cookie = this.getCookieWithJwtToken(username, userId);
             return {
                 cookie,
-                user:{
+                user: {
                     id: userId,
                     email, username, fullName
                 }
@@ -100,6 +101,60 @@ export class AuthService {
             this.logger.error(error);
             throw new InternalServerErrorException(`Error when logining: ${error}`);
         }
+    }
+
+    async signIn(req: Request) {
+        try {
+            const { account, password } = req.body;
+            const user = await this.databaseService.account.findUnique({
+                where: {
+                    username: account
+                },
+                include: {
+                    user: true,
+                }
+            });
+            if(user) {
+                const isMatch = this.bryptService.isEqual(password, user.password)
+                return 
+            }
+        } catch (error) {
+            this.logger.error(error);
+            throw new InternalServerErrorException(`Error when logining: ${error}`);
+        }
+    }
+
+    async refreshToken(refreshToken: string) {
+        try {
+            if (!refreshToken) {
+                throw new UnauthorizedException("Please login now!");
+            }
+
+            const result = this.jwtService.verify(refreshToken);
+            if (!result) {
+                throw new UnauthorizedException("Something wrong, please login now!");
+            }
+
+            const account = await this.databaseService.account.findFirstOrThrow({
+                where: {
+                    userId: result.userId
+                }
+            });
+
+            if (!account) {
+                throw new UnauthorizedException("Authentication failed, please login again!");
+            }
+
+            const payload: TokenPayload = { username: account.username, userId: account.userId }
+
+            const accessToken = this.jwtService.sign(payload);
+
+        } catch (error) {
+
+        }
+    }
+    createAccessToken(payload: any) {
+
     }
 
     getCookieWithJwtToken(username: string, userId: string) {
@@ -111,7 +166,7 @@ export class AuthService {
                 signOptions: { expiresIn },
             } = this.appConfigService.getJwtConfig();
 
-            const token = this.jwt.sign(payload);
+            const token = this.jwtService.sign(payload);
             return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${expiresIn};SameSite=None; Secure`;
         } catch (error) {
             this.logger.error(error);
