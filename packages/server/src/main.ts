@@ -99,7 +99,7 @@ bootstrap();
 
 function setupSwagger(app: INestApplication) {
 	const config = new DocumentBuilder()
-		.setTitle('V Course Management API')
+		.setTitle('V Network Management API')
 		.setDescription('The V Course API description')
 		.setVersion('1.0')
 		.addTag('auth')
