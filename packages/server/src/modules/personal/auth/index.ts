@@ -9,6 +9,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 import { UserService } from "../user/service";
 import { BcryptService } from "@modules/bcrypt/service";
+import { RolesGuard } from "./guards/role";
 
 @Global()
 @Module({
@@ -30,13 +31,13 @@ import { BcryptService } from "@modules/bcrypt/service";
 		ConfigService,
 		Logger,
 		UserService,
-		BcryptService
+		BcryptService,
 		// LocalStrategy,
 		// JwtStrategy,
-		// {
-		//   provide: APP_GUARD,
-		//   useClass: RolesGuard,
-		// },
+		{
+		  provide: APP_GUARD,
+		  useClass: RolesGuard,
+		},
 	],
 	exports: [
 		AuthService,

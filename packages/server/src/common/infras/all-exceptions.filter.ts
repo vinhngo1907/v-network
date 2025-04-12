@@ -10,58 +10,69 @@ import { AppConfigService } from 'src/config/service';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-    constructor(private readonly appConfigService: AppConfigService){}
-    catch(exception: unknown, host: ArgumentsHost) {
-        const ctx = host.switchToHttp();
-        const response = ctx.getResponse();
-        const request = ctx.getRequest();
+	constructor(private readonly appConfigService: AppConfigService) {}
 
-        const status =
-            exception instanceof HttpException
-                ? exception.getStatus()
-                : HttpStatus.INTERNAL_SERVER_ERROR;
+	catch(exception: unknown, host: ArgumentsHost) {
+		const ctx = host.switchToHttp();
+		const response = ctx.getResponse();
+		const request = ctx.getRequest();
 
-        if (
-            status === HttpStatus.UNAUTHORIZED &&
-            request.originalUrl === '/auth/profile'
-        ) {
-            response.setHeader(
-                'Access-Control-Allow-Origin',
-                this.appConfigService.getClientUrl()
-                // configService.getClientUrl(),
-            );
+		// ✅ Log chi tiết để debug
+		console.error('❌ Exception caught by AllExceptionsFilter:', exception);
 
-            response.setHeader(
-                'Set-Cookie',
-                `Authentication=; HttpOnly; Path=/; Max-Age=0;SameSite=None; Secure`,
-            );
-            response.status(HttpStatus.OK).send();
-            return;
-        }
+		const path = request.originalUrl || request.url || '';
+		let status =
+			exception instanceof HttpException
+				? exception.getStatus()
+				: HttpStatus.INTERNAL_SERVER_ERROR;
 
-        let message: any =
-            exception instanceof HttpException
-                ? exception.getResponse()
-                : 'Internal server';
-        message = message instanceof Object ? message.message : message;
-        if (message instanceof Array) {
-            for (let i = 0; i < message.length; i++) {
-                if (message[i].split(' ')[0].includes('.')) {
-                    const customMessage = message[i].split(' ');
-                    customMessage[0] = customMessage[0].split('.')[2];
-                    message[i] = customMessage.join(' ');
-                }
-            }
-        }
-        // response.setHeader(
-        //     'Access-Control-Allow-Origin',
-        //     // configService.getClientUrl(),
-        // );
-        response.status(status).json({
-            status,
-            timestamp: new Date().toUTCString(),
-            message,
-            path: request.url,
-        });
-    }
+		if (status === HttpStatus.UNAUTHORIZED && path === '/auth/profile') {
+			response.setHeader(
+				'Access-Control-Allow-Origin',
+				this.appConfigService.getClientUrl(),
+			);
+			response.setHeader(
+				'Set-Cookie',
+				`Authentication=; HttpOnly; Path=/; Max-Age=0; SameSite=None; Secure`,
+			);
+			response.status(HttpStatus.OK).send();
+			return;
+		}
+
+		let message: any;
+
+		if (exception instanceof HttpException) {
+			const res = exception.getResponse();
+			if (typeof res === 'string') {
+				message = res;
+			} else if (typeof res === 'object' && 'message' in res) {
+				message = (res as any).message;
+			} else {
+				message = res;
+			}
+		} else if (exception instanceof Error) {
+			message = exception.message;
+		} else {
+			message = 'Internal server error';
+		}
+
+		// xử lý lại message dạng array nếu cần
+		if (Array.isArray(message)) {
+			message = message.map((msg) => {
+				if (typeof msg === 'string' && msg.split(' ')[0].includes('.')) {
+					const customMessage = msg.split(' ');
+					customMessage[0] = customMessage[0].split('.')[2];
+					return customMessage.join(' ');
+				}
+				return msg;
+			});
+		}
+
+		response.status(status).json({
+			status,
+			timestamp: new Date().toUTCString(),
+			message,
+			path,
+		});
+	}
 }

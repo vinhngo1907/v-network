@@ -17,6 +17,6 @@ import { BcryptService } from "@modules/bcrypt/service";
         AccountService,
         BcryptService,
         Logger
-    ]
+    ],
 })
 export class PersonalModule{}

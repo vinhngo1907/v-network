@@ -1,9 +1,10 @@
-import { Controller, Injectable, Post, Req, Res, Get, HttpCode, Body } from "@nestjs/common";
+import { Controller, Injectable, Post, Req, Res, Get, HttpCode, Body, UseGuards } from "@nestjs/common";
 import { AuthService } from "./service";
 import RequestWithAccount from "./interfaces/RequestWithAccount";
 import { Request, Response } from 'express';
 import { ApiTags } from "@nestjs/swagger";
 import { RegisterPayload } from "./types";
+import { LocalAuthGuard } from "./guards/local";
 @Injectable()
 @ApiTags("Auth")
 @Controller("auth")
@@ -17,9 +18,10 @@ export class AuthController {
         return res.send({ "Success": true, message: "Success" });
     }
 
-    @Post("sign-in")
-    async signIn(@Req() req: RequestWithAccount, @Res() res: Response){
-        
+    // @UseGuards(LocalAuthGuard)
+    @Post("signin")
+    async signIn(@Body() payload: any){
+        return await this.authService.signIn(payload);
     }
 
     @Post("register")
@@ -29,7 +31,8 @@ export class AuthController {
 
     @Get("isLoggedIn")
     isLoggedIn(@Res() res: Response) {
-        return res.send({ "Success": true, message: "Success" });
+        console.log("Hello Coders Tokyo")
+        res.send({ "Success": true, message: "Success" });
     }
 
     @HttpCode(200)

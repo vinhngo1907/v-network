@@ -9,12 +9,15 @@ import { APP_FILTER } from '@nestjs/core';
 import { DatabaseModule } from './database';
 import { PersonalModule } from './personal';
 import { HttpExceptionFilter } from '@common/infras/http-exception.filter';
+import { NotifyModule } from './notify';
 
 @Module({
 	imports: [
-		AppConfigModule, LoggerModule,
+		AppConfigModule, 
+		LoggerModule,
 		PostModule,
 		CommentModule,
+		NotifyModule,
 		//  RedisModule,
 		// MongoDbModule,
 		DatabaseModule,

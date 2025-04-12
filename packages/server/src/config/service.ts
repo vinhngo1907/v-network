@@ -65,7 +65,7 @@ export class AppConfigService {
 	}
 	
 	public getClientUrl(): string {
-		return this.configService.get(configKeys.HEADER_IS_ADMIN)
+		return this.configService.get(configKeys.CLIENT_URL)
 	}
 
 	public isProduction() {

@@ -22,9 +22,9 @@ export class AuthService {
         private readonly bryptService: BcryptService,
     ) { }
 
-    async updateTwoStepVerificationState(userPhone: string, state: boolean): Promise<any> {
-        // await Update
-    }
+    // async updateTwoStepVerificationState(userPhone: string, state: boolean): Promise<any> {
+    //     // await Update
+    // }
 
     async register({
         username, account, fullName, password: rawPass
@@ -103,9 +103,9 @@ export class AuthService {
         }
     }
 
-    async signIn(req: Request) {
+    async signIn(payload: any) {
         try {
-            const { account, password } = req.body;
+            const { account, password } = payload;
             const user = await this.databaseService.account.findUnique({
                 where: {
                     username: account
@@ -114,10 +114,12 @@ export class AuthService {
                     user: true,
                 }
             });
+            console.log({user});
             if(user) {
                 const isMatch = this.bryptService.isEqual(password, user.password)
-                return 
+                return user;
             }
+            return user;
         } catch (error) {
             this.logger.error(error);
             throw new InternalServerErrorException(`Error when logining: ${error}`);

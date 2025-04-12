@@ -1,10 +1,12 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from 'src/modules';
-import { AppConfigService } from 'src/config/service';
+import { AppConfigService } from './config/service';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { DatabaseService } from '@modules/database/service';
+import { AppLoggerService } from './common/logger/service';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppLoggerService } from 'src/common/logger/service';
-import { DatabaseService } from './modules/database/service';
+// import { HttpExceptionFilter } from './common/infras/http-exception.filter';
+import { AllExceptionsFilter } from './common/infras/all-exceptions.filter';
 import {
 	utilities as nestWinstonModuleUtilities,
 	WinstonModule,
@@ -12,9 +14,9 @@ import {
 import * as winston from "winston";
 import * as cookieParser from 'cookie-parser';
 import { ResponseAddAccessTokenToHeaderInterceptor } from './common/interceptors/responseWithAllowOriginInterceptor';
-import { AllExceptionsFilter } from './common/infras/all-exceptions.filter';
 
 async function bootstrap() {
+	try{
 	const app = await NestFactory.create(AppModule, {
 		logger: WinstonModule.createLogger({
 			level: process.env.LOG_LEVEL || 'info',
@@ -40,6 +42,7 @@ async function bootstrap() {
 		}),
 		cors: true
 	});
+	// if(!configSer)
 
 	app.useGlobalPipes(
 		new ValidationPipe({
@@ -89,13 +92,18 @@ async function bootstrap() {
 		logger.log(`Server is running on port ${port}`, 'Bootstrap');
 		logger.log(`Current node environment: ${NODE_ENV}`);
 	});
+
+	// await prismaSerivce.enableShutdownHooks(app);
+}catch(error){
+	console.error('❌ Error during bootstrap:', error);
+}
 }
 
 bootstrap();
 
 function setupSwagger(app: INestApplication) {
 	const config = new DocumentBuilder()
-		.setTitle('V Network Management API')
+		.setTitle('V Course Management API')
 		.setDescription('The V Course API description')
 		.setVersion('1.0')
 		.addTag('auth')
@@ -103,3 +111,5 @@ function setupSwagger(app: INestApplication) {
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('docs', app, document);
 }
+
+export const SRC_DIR = __dirname
