@@ -130,7 +130,14 @@ export class AuthService {
             }
 
             const tokenPayload: TokenPayload = { username: user.username, userId: user.id }
-            const accessToken = this.jwtService.sign(tokenPayload);
+            const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
+            const accessToken = this.jwtService.sign(tokenPayload, {
+                secret: accessTokenSecret, expiresIn: '1d'
+            });
+            
+            const refreshToken = this.jwtService.sign(tokenPayload, {
+                secret: refreshTokenSecret, expiresIn: '7d'
+            })
             res.cookie("refreshToken", accessToken, {
                 httpOnly: true,
                 path: '/auth/refresh-token',
