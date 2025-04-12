@@ -20,7 +20,7 @@ export class AuthController {
     }
 
     @Post("signin")
-    async signIn(@Body() payload: any, @Res() res: Response){
+    async signIn(@Body() payload: {account: string, password: string}, @Res() res: Response){
         return await this.authService.signIn(payload, res);
     }
 

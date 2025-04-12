@@ -10,6 +10,7 @@ import { AuthBadRequestException } from "./exception";
 import { BcryptService } from "@modules/bcrypt/service";
 import { AccountBadRequestException } from "../account/exception";
 import { Request, Response } from "express";
+import { AccountType } from "@prisma/client"
 
 @Injectable()
 export class AuthService {
@@ -103,7 +104,7 @@ export class AuthService {
         }
     }
 
-    async signIn(payload: any, res: Response) {
+    async signIn(payload: { account: string, password: string }, res: Response) {
         try {
             const { account, password } = payload;
             const user = await this.databaseService.account.findUnique({
@@ -119,7 +120,7 @@ export class AuthService {
                 throw new AuthBadRequestException("User not found or not authorized");
             }
 
-            if (account.type !== "register") {
+            if (user.type !== AccountType.REGISTER.toLowerCase()) {
                 throw new AuthBadRequestException(`Quick login account with ${user.type} can't use this function.`);
             }
 
@@ -135,7 +136,7 @@ export class AuthService {
                 path: '/auth/refresh-token',
                 maxAge: 30 * 24 * 60 * 60 * 1000 // 30days
             });
-            
+
             delete user.password;
             delete user.rfToken;
 
