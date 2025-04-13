@@ -139,14 +139,14 @@ export class AuthService {
                 secret: refreshTokenSecret, expiresIn: '7d'
             });
             await this.databaseService.account.update({
-                where:{
-                    id: user.id, 
+                where: {
+                    id: user.id,
                 },
                 data: {
                     rfToken: refreshToken
                 }
             });
-            
+
             res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
                 path: '/auth/refresh-token',
@@ -181,6 +181,9 @@ export class AuthService {
             const account = await this.databaseService.account.findFirstOrThrow({
                 where: {
                     userId: result.userId
+                },
+                include: {
+                    user: true
                 }
             });
 
@@ -188,14 +191,38 @@ export class AuthService {
                 throw new UnauthorizedException("Authentication failed, please login again!");
             }
 
+            if (account.rfToken !== refreshToken) {
+                throw new UnauthorizedException("Please login now!");
+            }
             const payload: TokenPayload = { username: account.username, userId: account.userId }
+            const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
 
-            const accessToken = this.jwtService.sign(payload);
+            const accessToken = this.jwtService.sign(payload, {
+                secret: accessTokenSecret,
+                expiresIn: "1d"
+            });
 
+            const rfToken = this.jwtService.sign(payload, {
+                secret: refreshTokenSecret,
+                expiresIn: "7d"
+            });
+
+            await this.databaseService.account.update({
+                where:{
+                    id: account.id
+                },
+                data:{
+                    rfToken: rfToken
+                }
+            })
+
+            return { accessToken, account }
         } catch (error) {
-
+            this.logger.error(error);
+            throw new InternalServerErrorException(`Error when logining: ${error}`);
         }
     }
+
     createAccessToken(payload: any) {
 
     }
