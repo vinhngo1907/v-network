@@ -208,10 +208,10 @@ export class AuthService {
             });
 
             await this.databaseService.account.update({
-                where:{
+                where: {
                     id: account.id
                 },
-                data:{
+                data: {
                     rfToken: rfToken
                 }
             })
@@ -235,8 +235,12 @@ export class AuthService {
                 secret,
                 signOptions: { expiresIn },
             } = this.appConfigService.getJwtConfig();
+            const { accessTokenSecret } = this.appConfigService.getJwtSecrets();
 
-            const token = this.jwtService.sign(payload);
+            const token = this.jwtService.sign(payload, {
+                secret: accessTokenSecret,
+                expiresIn: expiresIn
+            });
             return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${expiresIn};SameSite=None; Secure`;
         } catch (error) {
             this.logger.error(error);

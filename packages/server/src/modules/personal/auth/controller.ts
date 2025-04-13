@@ -1,4 +1,4 @@
-import { Controller, Injectable, Post, Req, Res, Get, HttpCode, Body, UseGuards } from "@nestjs/common";
+import { Controller, Injectable, Post, Req, Res, Get, HttpCode, Body, UseGuards, HttpStatus } from "@nestjs/common";
 import { AuthService } from "./service";
 import RequestWithAccount from "./interfaces/RequestWithAccount";
 import { Request, Response } from 'express';
@@ -38,8 +38,12 @@ export class AuthController {
     @HttpCode(200)
     @Get("logout")
     logout(@Res() res: Response) {
-        res.clearCookie('refreshToken')
-        return res.send();
+        res.clearCookie('refreshToken');
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'success',
+            data: null
+        };
     }
 
     @Post("/refresh-token")
