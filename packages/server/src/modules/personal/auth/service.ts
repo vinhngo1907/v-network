@@ -31,6 +31,7 @@ export class AuthService {
         username, account, fullName, password: rawPass
     }: RegisterPayload): Promise<any> {
         try {
+            console.log({username, account, fullName, password: rawPass})
             if (ValidationUtils.validateEmail(account)) {
                 const checkUser = ValidationUtils.validateRegister({
                     username, account
@@ -64,7 +65,7 @@ export class AuthService {
                 return await this.databaseService.$transaction(async (manager) => {
                     const createdUser = await this.userService.createUserTransaction(
                         manager, username, account, hashedPassword, fullName, [userRole], accountType
-                    )
+                    );
 
                     return this.login({
                         username,

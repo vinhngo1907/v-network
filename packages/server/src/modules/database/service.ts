@@ -1,6 +1,8 @@
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { camelCase, flattenDeep, snakeCase } from 'lodash';
+import { middlewares } from './middleware';
+// import { middlewares } from './middleware';
 
 @Injectable()
 export class DatabaseService extends PrismaClient {
@@ -14,6 +16,7 @@ export class DatabaseService extends PrismaClient {
     async onModuleInit() {
         await this.$connect();
         this.logger.log("Prisma connected");
+        middlewares.forEach(middleware => this.$use(middleware()));
     }
 
     // async enableShutdownHooks(app: INestApplication) {
