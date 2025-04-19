@@ -59,10 +59,11 @@ export class AuthService {
                         name: "USER"
                     }
                 });
-
+                
+                const accountType: AccountType = AccountType.REGISTER;
                 return await this.databaseService.$transaction(async (manager) => {
                     const createdUser = await this.userService.createUserTransaction(
-                        manager, username, account, hashedPassword, fullName, [userRole]
+                        manager, username, account, hashedPassword, fullName, [userRole], accountType
                     )
 
                     return this.login({
@@ -107,7 +108,7 @@ export class AuthService {
     async signIn(payload: { account: string, password: string }, res: Response) {
         try {
             const { account, password } = payload;
-            const user = await this.databaseService.account.findUnique({
+            const existedAccount = await this.databaseService.account.findUnique({
                 where: {
                     username: account
                 },
@@ -116,20 +117,20 @@ export class AuthService {
                 }
             });
 
-            if (!user) {
+            if (!existedAccount) {
                 throw new AuthBadRequestException("User not found or not authorized");
             }
 
-            if (user.type !== AccountType.REGISTER.toLowerCase()) {
-                throw new AuthBadRequestException(`Quick login account with ${user.type} can't use this function.`);
+            if (existedAccount.type !== AccountType.REGISTER.toLowerCase()) {
+                throw new AuthBadRequestException(`Quick login account with ${existedAccount.type} can't use this function.`);
             }
 
-            const isMatch = await this.bryptService.isEqual(password, user.password);
+            const isMatch = await this.bryptService.isEqual(password, existedAccount.password);
             if (!isMatch) {
                 throw new AuthBadRequestException("Password is not correct");
             }
 
-            const tokenPayload: TokenPayload = { username: user.username, userId: user.id }
+            const tokenPayload: TokenPayload = { username: existedAccount.username, userId: existedAccount.user.id }
             const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
             const accessToken = this.jwtService.sign(tokenPayload, {
                 secret: accessTokenSecret, expiresIn: '1d'
@@ -140,7 +141,7 @@ export class AuthService {
             });
             await this.databaseService.account.update({
                 where: {
-                    id: user.id,
+                    id: existedAccount.id,
                 },
                 data: {
                     rfToken: refreshToken
@@ -153,8 +154,8 @@ export class AuthService {
                 maxAge: 30 * 24 * 60 * 60 * 1000 // 30days
             });
 
-            delete user.password;
-            delete user.rfToken;
+            delete existedAccount.password;
+            delete existedAccount.rfToken;
 
             return {
                 accessToken,
@@ -173,12 +174,20 @@ export class AuthService {
                 throw new UnauthorizedException("Please login now!");
             }
 
-            const result = this.jwtService.verify(refreshToken);
+            const result: TokenPayload = this.jwtService.verify(refreshToken);
             if (!result) {
                 throw new UnauthorizedException("Something wrong, please login now!");
             }
 
-            const account = await this.databaseService.account.findFirstOrThrow({
+            // const account = await this.databaseService.account.findFirstOrThrow({
+            //     where: {
+            //         userId: result.userId
+            //     },
+            //     include: {
+            //         user: true
+            //     }
+            // });
+            const account = await this.databaseService.account.findFirst({
                 where: {
                     userId: result.userId
                 },
@@ -194,7 +203,7 @@ export class AuthService {
             if (account.rfToken !== refreshToken) {
                 throw new UnauthorizedException("Please login now!");
             }
-            const payload: TokenPayload = { username: account.username, userId: account.userId }
+            const payload: TokenPayload = { username: account.username, userId: account.user.id }
             const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
 
             const accessToken = this.jwtService.sign(payload, {

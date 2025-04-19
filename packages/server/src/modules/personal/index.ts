@@ -5,6 +5,7 @@ import { AuthService } from "./auth/service";
 import { AccountService } from "./account/service";
 import { UserModule } from "./user";
 import { BcryptService } from "@modules/bcrypt/service";
+import { KafkaService } from "@modules/kafka/service";
 
 @Module({
     imports: [

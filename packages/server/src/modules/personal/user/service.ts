@@ -2,13 +2,18 @@ import { AppLoggerService } from '@common/logger/service';
 import { DatabaseService } from '@modules/database/service';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { UserBadRequestException } from './exception';
-import { Role, User, Account } from "@prisma/client";
+import { Role, User, Account, AccountType } from "@prisma/client";
+import { AppConfigService } from '@config/service';
+import { JwtService } from '@nestjs/jwt';
+import { TokenPayload } from '../auth/types';
 
 @Injectable()
 export class UserService {
     private readonly logger = new Logger(UserService.name);
     constructor(
-        private databaseService: DatabaseService
+        private databaseService: DatabaseService,
+        private appConfigService: AppConfigService,
+        private readonly jwtService: JwtService,
     ) { }
 
     async checkEmailExisted(account: string): Promise<any> {
@@ -34,11 +39,12 @@ export class UserService {
         email: string,
         hashedPassword: string,
         fullName: string,
-        userRole: Role[]
+        userRole: Role[],
+        type: AccountType,
     ): Promise<User> {
         const newAccount = await this.databaseService.account.create({
             data: {
-                username, password: hashedPassword
+                username, password: hashedPassword, type, rfToken: ''
             }
         });
 
@@ -57,6 +63,13 @@ export class UserService {
             }
         });
 
+        // const tokenPayload: TokenPayload = {
+        //     username: username, userId: newUser.id
+        // }
+        // const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
+        // const accessToken = this.jwtService.sign(tokenPayload, {
+        //     secret: accessTokenSecret, expiresIn: '1d'
+        // });
         return newUser;
     }
 }

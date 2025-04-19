@@ -21,7 +21,9 @@ async function main() {
         const newAccount = await prisma.account.create({
             data: {
                 username: 'admin',
-                password: hashedPassword, // Use the hashed password        
+                password: hashedPassword,
+                type: "REGISTER",
+                rfToken: ''      
             },
         });
 

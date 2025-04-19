@@ -3,38 +3,38 @@ import { HttpService } from '@nestjs/axios';
 import { UserDTO } from './dto';
 // import { DatabaseService } from 'src/database';
 import { from, of } from 'rxjs';
-import { KafkaService } from 'src/kafka/service';
+// import { KafkaService } from 'src/kafka/service';
 import * as jwt from "jsonwebtoken";
 // import bcrypt from 'bcrypt'
 const bcrypt = require("bcrypt");
 
 @Injectable()
-export class UserService implements OnModuleInit {
+export class UserService {
 	private loggerService: Logger
 	constructor(
 		private httpService: HttpService,
 		// private databaseService: DatabaseService,
-		private kafkaService: KafkaService
+		// private kafkaService: KafkaService
 	) {
 		this.loggerService = new Logger();
 	}
 
-	async onModuleInit() {
-		try {
-			// ----------------- listening on topic update profile user --------------- //
-			const consumerProfileUser = this.kafkaService.GetUser('auth-microservice-profile');
-			await consumerProfileUser.connect();
-			await consumerProfileUser.subscribe({
-				topic: 'profile_user',
-				fromBeginning: true
-			});
-			await consumerProfileUser.run({
+	// async onModuleInit() {
+	// 	try {
+	// 		// ----------------- listening on topic update profile user --------------- //
+	// 		const consumerProfileUser = this.kafkaService.GetUser('auth-microservice-profile');
+	// 		await consumerProfileUser.connect();
+	// 		await consumerProfileUser.subscribe({
+	// 			topic: 'profile_user',
+	// 			fromBeginning: true
+	// 		});
+	// 		await consumerProfileUser.run({
 
-			});
-		} catch (err) {
-			this.loggerService.error("An error while init the module auth", err);
-		}
-	}
+	// 		});
+	// 	} catch (err) {
+	// 		this.loggerService.error("An error while init the module auth", err);
+	// 	}
+	// }
 
 	showAll(
 		page: number = 1,
@@ -56,24 +56,24 @@ export class UserService implements OnModuleInit {
 
 		return []
 	}
-	async register(data: UserDTO) {
-		try {
-			const { username, password } = data;
-			const user = {};
-			if (user) {
-				throw new HttpException('Invalid username/password', HttpStatus.BAD_REQUEST);
-			}
-			const passHashed = await bcrypt.hash(password, 10)
-			const newUser = {};
-			await this.kafkaService.SendMessage('profile_user', newUser)
-			return of({
-				user: { ...newUser, password: "" }
-			});
-		} catch (err: any) {
-			console.log(err);
-			throw err;
-		}
-	}
+	// async register(data: UserDTO) {
+	// 	try {
+	// 		const { username, password } = data;
+	// 		const user = {};
+	// 		if (user) {
+	// 			throw new HttpException('Invalid username/password', HttpStatus.BAD_REQUEST);
+	// 		}
+	// 		const passHashed = await bcrypt.hash(password, 10)
+	// 		const newUser = {};
+	// 		await this.kafkaService.SendMessage('profile_user', newUser)
+	// 		return of({
+	// 			user: { ...newUser, password: "" }
+	// 		});
+	// 	} catch (err: any) {
+	// 		console.log(err);
+	// 		throw err;
+	// 	}
+	// }
 
 	async login(data: UserDTO) {
 		try {

@@ -1,7 +1,7 @@
 import { Controller, Inject, UseGuards, Get, Post, UsePipes, Body, Param, Put, Delete, Patch, Query } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { from, map, of, switchMap } from 'rxjs';
-import { KafkaService } from 'src/kafka/service';
+// import { KafkaService } from 'src/kafka/service';
 import { AuthGuard } from '../gen/auth.guard';;
 import { UserDTO } from './dto';
 import { UserService } from './service';
@@ -30,25 +30,25 @@ export class UserController {
         }
     }
 
-    @Post('/register')
-    @UsePipes()
-    async register(
-        @Body() ResponseBody: UserDTO
-    ) {
-        try {
-            return from(await this.userService.register(ResponseBody)).pipe(
-                map(data => {
-                    return of({
-                        msg: "Registerd in successfully",
-                        data: data
-                    })
-                })
-            );
-        } catch (err: any) {
-            console.log(err);
-            throw err;
-        }
-    }
+    // @Post('/register')
+    // @UsePipes()
+    // async register(
+    //     @Body() ResponseBody: UserDTO
+    // ) {
+    //     try {
+    //         return from(await this.userService.register(ResponseBody)).pipe(
+    //             map(data => {
+    //                 return of({
+    //                     msg: "Registerd in successfully",
+    //                     data: data
+    //                 })
+    //             })
+    //         );
+    //     } catch (err: any) {
+    //         console.log(err);
+    //         throw err;
+    //     }
+    // }
 
     @Post('/login')
     @UsePipes()
