@@ -14,7 +14,7 @@ Content-Type: application/json
 
 {
   "account": "vinhtrungngo1907@gmail.com",
-  "fullname":"Ngo Trung Vinh",
+  "fullName":"Ngo Trung Vinh",
   "username": "vinhngo97",
   "password": "123456"
 }
