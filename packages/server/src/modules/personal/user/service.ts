@@ -6,6 +6,7 @@ import { Role, User, Account, AccountType } from "@prisma/client";
 import { AppConfigService } from '@config/service';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from '../auth/types';
+import { Request } from 'express';
 
 @Injectable()
 export class UserService {
@@ -75,11 +76,11 @@ export class UserService {
 
     async findUserById(id: string) {
         const user = await this.databaseService.user.findFirstOrThrow({
-            where:{
+            where: {
                 id: id
             }
         });
-        if(!user){
+        if (!user) {
             throw new UserNotFoundException("User not found or/and authorized");
         }
 

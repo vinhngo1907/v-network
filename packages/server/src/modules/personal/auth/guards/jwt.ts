@@ -28,24 +28,27 @@ export class JwtAuthGuard extends AuthGuard("jwt") {
 
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
-        console.log("??????",{token})
-        if(!token){
+        // console.log("??????", { token })
+        if (!token) {
             throw new UnauthorizedException("Invalid Authentication");
         }
-        const {secret, signOptions}  = this.appConfigService.getJwtConfig()
-        const decoded = this.jwtService.verify(token, {
-            secret,
-        });
-        console.log(">>>>>>",{decoded});
-        if(!decoded){
-            throw new UnauthorizedException("Invalid Authentication");
+        try {
+            const { secret, signOptions } = this.appConfigService.getJwtConfig()
+            const decoded = this.jwtService.verify(token, {
+                secret,
+            });
+            // console.log(">>>>>>", { decoded });
+            if (!decoded) {
+                throw new UnauthorizedException("Invalid Authentication");
+            }
+
+            request['user'] = decoded;
+            // return super.canActivate(context);
+            // console.log("CHu ba bi bo nha nho", request['user'])
+        } catch (error) {
+            throw new UnauthorizedException(error);
         }
-
-        request['user'] = decoded;
-
-        // return super.canActivate(context);
-        console.log("CHu ba bi bo nha nho", request['user'])
-        return true
+        return true;
     }
 
     private extractTokenFromHeader(request: Request): string | undefined {

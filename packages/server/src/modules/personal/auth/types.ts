@@ -25,3 +25,11 @@ export interface TokenPayload {
     username: string;
     userId: string;
 }
+
+export class LoginPayload {
+    @ApiProperty()
+    account: string;
+
+    @ApiProperty()
+    password: string;
+}

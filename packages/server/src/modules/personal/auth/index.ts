@@ -12,6 +12,8 @@ import { BcryptService } from "@modules/bcrypt/service";
 import { RolesGuard } from "./guards/role";
 import { JwtAuthGuard } from "./guards/jwt";
 import { JwtStrategy } from "./strategies/jwt";
+import { UserModule } from "../user";
+import { AccountModule } from "../account";
 
 @Global()
 @Module({
@@ -39,7 +41,7 @@ import { JwtStrategy } from "./strategies/jwt";
 		{
 		  provide: APP_GUARD,
 		  useClass: RolesGuard,
-		}
+		},
 	],
 	exports: [
 		AuthService,

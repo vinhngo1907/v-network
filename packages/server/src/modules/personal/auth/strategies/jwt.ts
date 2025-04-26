@@ -13,22 +13,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         private readonly configService: AppConfigService
     ) {
         super({
-            jwtFromRequest: ExtractJwt.fromExtractors(
-                [
-                (request: Request) => {
-                    console.log("??????", request.headers["authorization"])
-                    return  request.headers["authorization"];
-                },
-            ]
-        ),
+                jwtFromRequest: ExtractJwt.fromExtractors(
+                    [
+                    (request: Request) => {
+                        console.log("??????", request.headers["authorization"])
+                        return  request.headers["authorization"];
+                    },
+                ]
+            ),
             ignoreExpiration: false,
             secretOrKey: configService.getJwtConfig().secret,
         });
     }
 
     async validate(payload: any) {
+        console.log("????", { payload })
         const user = await this.authService.validateJwtUser(payload);
-        console.log("CHECK USER",{user})
+        console.log("CHECK USER", { user })
         if (!user) {
             throw new UserBadRequestException("[TEST NE]");
         }

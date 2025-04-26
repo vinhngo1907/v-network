@@ -2,9 +2,10 @@ import { Controller, Injectable, Post, Req, Res, Get, HttpCode, Body, UseGuards,
 import { AuthService } from "./service";
 import RequestWithAccount from "./interfaces/RequestWithAccount";
 import { Request, Response } from 'express';
-import { ApiTags } from "@nestjs/swagger";
-import { RegisterPayload } from "./types";
+import { ApiBody, ApiTags } from "@nestjs/swagger";
+import { LoginPayload, RegisterPayload } from "./types";
 import { LocalAuthGuard } from "./guards/local";
+import { Public } from "./decorator";
 @Injectable()
 @ApiTags("Auth")
 @Controller("auth")
@@ -19,13 +20,20 @@ export class AuthController {
         return res.send({ "Success": true, message: "Success" });
     }
 
+    @HttpCode(200)
+    @ApiBody({
+        type: LoginPayload,
+    })
+    @Public()
+    // @UseGuards(LocalAuthGuard)
     @Post("signin")
     async signIn(@Body() payload: { account: string, password: string }, @Res() res: Response) {
         try {
-            return await this.authService.signIn(payload, res);
+            const data = await this.authService.signIn(payload, res);
+            return res.status(200).json({ "Success": true, data, message: "Signin in successfully!", error: null });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ error: "Internal Server Error" });
+            return res.status(500).json({ "Success": false, data: null, error: error.message });
         }
     }
 

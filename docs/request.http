@@ -42,4 +42,5 @@ GET {{serverUrl}}/notify/hello
 ###
 # GET {{serverUrl}}/user/69568f79-86a2-4e08-bc2b-401337b4de10
 GET {{serverUrl}}/user/83c9d434-3e22-4f05-a104-12ff627b92cd
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZpbmhuZ285NyIsInVzZXJJZCI6IjgzYzlkNDM0LTNlMjItNGYwNS1hMTA0LTEyZmY2MjdiOTJjZCIsImlhdCI6MTc0NTYzMTk0OCwiZXhwIjoxNzQ1NzE4MzQ4fQ.KGBfYJLx1wdP1R-n8hTpDjhKy2xq2prkPHdH1yLV0ee
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZpbmhuZ285NyIsInVzZXJJZCI6IjgzYzlkNDM0LTNlMjItNGYwNS1hMTA0LTEyZmY2MjdiOTJjZCIsImlhdCI6MTc0NTY1NTAzMywiZXhwIjoxNzQ1NzQxNDMzfQ.0CtsG6tVhNdcI0eYs60FJzww3X61Yh8_4a4Smf7x_gg

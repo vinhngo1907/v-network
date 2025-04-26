@@ -17,7 +17,7 @@ import { JwtAuthGuard } from './personal/auth/guards/jwt';
 
 @Module({
 	imports: [
-		AppConfigModule, 
+		AppConfigModule,
 		LoggerModule,
 		PostModule,
 		CommentModule,
@@ -26,14 +26,8 @@ import { JwtAuthGuard } from './personal/auth/guards/jwt';
 		// MongoDbModule,
 		DatabaseModule,
 		PersonalModule,
-		// PassportModule,
-		// 		JwtModule.registerAsync({
-		// 			useFactory: async (appConfig: AppConfigService) => appConfig.getJwtConfig(),
-		// 			inject: [AppConfigService]
-		// 		})
 	],
 	providers: [
-		Logger,
 		{
 			provide: APP_FILTER,
 			useClass: HttpExceptionFilter
@@ -41,7 +35,8 @@ import { JwtAuthGuard } from './personal/auth/guards/jwt';
 		{
 			provide: APP_GUARD,
 			useClass: JwtAuthGuard
-		}
+		},
+		Logger,
 	]
 })
 export class AppModule {
