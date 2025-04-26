@@ -7,6 +7,7 @@ import { AppConfigService } from '@config/service';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from '../auth/types';
 import { Request } from 'express';
+import { PrismaFeatures } from '@modules/database/util';
 
 @Injectable()
 export class UserService {
@@ -64,13 +65,6 @@ export class UserService {
             }
         });
 
-        // const tokenPayload: TokenPayload = {
-        //     username: username, userId: newUser.id
-        // }
-        // const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
-        // const accessToken = this.jwtService.sign(tokenPayload, {
-        //     secret: accessTokenSecret, expiresIn: '1d'
-        // });
         return newUser;
     }
 
@@ -86,17 +80,33 @@ export class UserService {
 
         return user;
     }
-    async listUser(name: string) {
-        return await this.databaseService.account.findMany({
-            where: name ? {
-                OR: [
-                    { username: { contains: name, mode: 'insensitive' } }, // Search username trong Account
-                    { user: { is: { fullName: { contains: name, mode: 'insensitive' } } } }, // Đây nè, phải thêm `is: {}` !!!
-                ],
-            } : {},
-            include: {
-                user: true,
-            },
-        });
+
+    async listUser(queryString: string) {
+        try {
+            const features = new PrismaFeatures(queryString);
+
+            const filtering = features.filtering();
+            const pagination = features.paginating();
+            const sorting = features.sorting();
+
+            const [users, total] = await Promise.all([
+                this.databaseService.account.findMany({
+                    ...pagination,
+                    ...sorting,
+                    where: filtering.queryString?.where || {},
+                    include: { user: true },
+                }),
+                this.databaseService.account.count({
+                    where: filtering.queryString?.where || {},
+                }),
+            ]);
+
+            return { users, total };
+        } catch (error) {
+            this.logger.error(error);
+            throw new InternalServerErrorException(error.message);
+        }
     }
+
+
 }

@@ -26,9 +26,9 @@ export class UserController {
 
     @Get()
     @UseGuards(JwtAuthGuard)
-    async getAllUser(@Query("name") name: string) {
+    async getAllUser(@Query() queryString: any) {
         try {
-            const data = await this.userService.listUser(name);
+            return await this.userService.listUser(queryString);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }

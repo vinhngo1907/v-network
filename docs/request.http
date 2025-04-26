@@ -44,3 +44,8 @@ GET {{serverUrl}}/notify/hello
 GET {{serverUrl}}/user/83c9d434-3e22-4f05-a104-12ff627b92cd
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZpbmhuZ285NyIsInVzZXJJZCI6IjgzYzlkNDM0LTNlMjItNGYwNS1hMTA0LTEyZmY2MjdiOTJjZCIsImlhdCI6MTc0NTY1NTAzMywiZXhwIjoxNzQ1NzQxNDMzfQ.0CtsG6tVhNdcI0eYs60FJzww3X61Yh8_4a4Smf7x_gg
+
+###
+GET {{serverUrl}}/user?name=vi
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZpbmhuZ285NyIsInVzZXJJZCI6IjgzYzlkNDM0LTNlMjItNGYwNS1hMTA0LTEyZmY2MjdiOTJjZCIsImlhdCI6MTc0NTY1NTAzMywiZXhwIjoxNzQ1NzQxNDMzfQ.0CtsG6tVhNdcI0eYs60FJzww3X61Yh8_4a4Smf7x_gg
