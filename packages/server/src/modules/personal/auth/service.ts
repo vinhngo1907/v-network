@@ -109,78 +109,78 @@ export class AuthService {
 
     async signIn(payload: { account: string, password: string }, res: Response) {
         // try {
-            const { account, password } = payload;
-            const accountWithEmailAndUsername = await this.databaseService.account.findUniqueOrThrow({
-                where: {
-                    username: account
-                },
-                include: {
-                    user: true,
-                }
-            });
-
-            // const accountWithEmailAndUsername = await this.databaseService.account.findFirst({
-            //     where: {
-            //         username: {
-            //             not: null
-            //         }
-            //     },
-            //     include: {
-            //         user: {
-            //             where: {
-            //                 email: {
-            //                     not: null
-            //                 }
-            //             }
-            //         }
-            //     }
-            // });
-
-            if (!accountWithEmailAndUsername) {
-                throw new AuthBadRequestException("User not found or not authorized");
+        const { account, password } = payload;
+        const accountWithEmailAndUsername = await this.databaseService.account.findUniqueOrThrow({
+            where: {
+                username: account
+            },
+            include: {
+                user: true,
             }
+        });
 
-            if (accountWithEmailAndUsername.type !== AccountType.REGISTER) {
-                throw new AuthBadRequestException(`Quick login account with ${accountWithEmailAndUsername.type} can't use this function.`);
+        // const accountWithEmailAndUsername = await this.databaseService.account.findFirst({
+        //     where: {
+        //         username: {
+        //             not: null
+        //         }
+        //     },
+        //     include: {
+        //         user: {
+        //             where: {
+        //                 email: {
+        //                     not: null
+        //                 }
+        //             }
+        //         }
+        //     }
+        // });
+
+        if (!accountWithEmailAndUsername) {
+            throw new AuthBadRequestException("User not found or not authorized");
+        }
+
+        if (accountWithEmailAndUsername.type !== AccountType.REGISTER) {
+            throw new AuthBadRequestException(`Quick login account with ${accountWithEmailAndUsername.type} can't use this function.`);
+        }
+
+        const isMatch = await this.bryptService.isEqual(password, accountWithEmailAndUsername.password);
+        if (!isMatch) {
+            throw new AuthBadRequestException("Password is not correct");
+        }
+
+        const tokenPayload: TokenPayload = { username: accountWithEmailAndUsername.username, userId: accountWithEmailAndUsername.user.id }
+        const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
+        const accessToken = this.jwtService.sign(tokenPayload, {
+            secret: accessTokenSecret, expiresIn: '1d'
+        });
+
+        const refreshToken = this.jwtService.sign(tokenPayload, {
+            secret: refreshTokenSecret, expiresIn: '7d'
+        });
+
+        await this.databaseService.account.update({
+            where: {
+                id: accountWithEmailAndUsername.id,
+            },
+            data: {
+                rfToken: refreshToken
             }
+        });
 
-            const isMatch = await this.bryptService.isEqual(password, accountWithEmailAndUsername.password);
-            if (!isMatch) {
-                throw new AuthBadRequestException("Password is not correct");
-            }
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            path: '/auth/refresh-token',
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30days
+        });
 
-            const tokenPayload: TokenPayload = { username: accountWithEmailAndUsername.username, userId: accountWithEmailAndUsername.user.id }
-            const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
-            const accessToken = this.jwtService.sign(tokenPayload, {
-                secret: accessTokenSecret, expiresIn: '1d'
-            });
+        delete accountWithEmailAndUsername.password;
+        delete accountWithEmailAndUsername.rfToken;
 
-            const refreshToken = this.jwtService.sign(tokenPayload, {
-                secret: refreshTokenSecret, expiresIn: '7d'
-            });
-
-            await this.databaseService.account.update({
-                where: {
-                    id: accountWithEmailAndUsername.id,
-                },
-                data: {
-                    rfToken: refreshToken
-                }
-            });
-
-            res.cookie("refreshToken", refreshToken, {
-                httpOnly: true,
-                path: '/auth/refresh-token',
-                maxAge: 30 * 24 * 60 * 60 * 1000 // 30days
-            });
-
-            delete accountWithEmailAndUsername.password;
-            delete accountWithEmailAndUsername.rfToken;
-            
-            return {
-                accessToken,
-                account: accountWithEmailAndUsername
-            }
+        return {
+            accessToken,
+            account: accountWithEmailAndUsername
+        }
     }
 
     async refreshToken(refreshToken: string) {
@@ -290,6 +290,29 @@ export class AuthService {
         } catch (error) {
             this.logger.error(error);
             throw new InternalServerErrorException(error);
+        }
+    }
+
+    async validateJwtUser({ userId, username }): Promise<any> {
+        try {
+            const user = await this.databaseService.user
+                .findUnique({
+                    where: {
+                        id: userId,
+                    }
+                });
+            if (!user) {
+                return null;
+            }
+            const { id, email, fullName } = user;
+            return {
+                username,
+                id,
+                email,
+                fullName,
+            };
+        } catch (error) {
+            return null;
         }
     }
 }

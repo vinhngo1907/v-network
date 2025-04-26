@@ -17,7 +17,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
 		const response = ctx.getResponse();
 		const request = ctx.getRequest();
 
-		// ✅ Log chi tiết để debug
 		console.error('❌ Exception caught by AllExceptionsFilter:', exception);
 
 		const path = request.originalUrl || request.url || '';

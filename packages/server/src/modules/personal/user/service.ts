@@ -1,7 +1,7 @@
 import { AppLoggerService } from '@common/logger/service';
 import { DatabaseService } from '@modules/database/service';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { UserBadRequestException } from './exception';
+import { UserBadRequestException, UserNotFoundException } from './exception';
 import { Role, User, Account, AccountType } from "@prisma/client";
 import { AppConfigService } from '@config/service';
 import { JwtService } from '@nestjs/jwt';
@@ -71,5 +71,18 @@ export class UserService {
         //     secret: accessTokenSecret, expiresIn: '1d'
         // });
         return newUser;
+    }
+
+    async findUserById(id: string) {
+        const user = await this.databaseService.user.findFirstOrThrow({
+            where:{
+                id: id
+            }
+        });
+        if(!user){
+            throw new UserNotFoundException("User not found or/and authorized");
+        }
+
+        return user;
     }
 }
