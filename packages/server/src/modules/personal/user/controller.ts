@@ -1,4 +1,4 @@
-import { Controller, Injectable } from "@nestjs/common";
+import { Controller, Get, Injectable } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "./service";
 
@@ -9,4 +9,9 @@ export class UserController {
     constructor (
         private readonly userService: UserService
     ) {}
+
+    @Get()
+    async getProfile(){
+        
+    }
 }

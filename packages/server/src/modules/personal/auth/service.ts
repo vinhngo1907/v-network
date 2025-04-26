@@ -31,7 +31,7 @@ export class AuthService {
         username, account, fullName, password: rawPass
     }: RegisterPayload): Promise<any> {
         try {
-            console.log({username, account, fullName, password: rawPass})
+            console.log({ username, account, fullName, password: rawPass })
             if (ValidationUtils.validateEmail(account)) {
                 const checkUser = ValidationUtils.validateRegister({
                     username, account
@@ -60,7 +60,7 @@ export class AuthService {
                         name: "USER"
                     }
                 });
-                
+
                 const accountType: AccountType = AccountType.REGISTER;
                 return await this.databaseService.$transaction(async (manager) => {
                     const createdUser = await this.userService.createUserTransaction(
@@ -92,13 +92,14 @@ export class AuthService {
     async login(account: any) {
         try {
             const { username, user: { userId, email, fullName } } = account;
-            const cookie = this.getCookieWithJwtToken(username, userId);
+            const { cookie, accessToken } = await this.getCookieWithJwtToken(username, userId);
             return {
                 cookie,
                 user: {
                     id: userId,
                     email, username, fullName
-                }
+                },
+                accessToken
             }
         } catch (error) {
             this.logger.error(error);
@@ -107,9 +108,9 @@ export class AuthService {
     }
 
     async signIn(payload: { account: string, password: string }, res: Response) {
-        try {
+        // try {
             const { account, password } = payload;
-            const existedAccount = await this.databaseService.account.findUnique({
+            const accountWithEmailAndUsername = await this.databaseService.account.findUniqueOrThrow({
                 where: {
                     username: account
                 },
@@ -118,20 +119,37 @@ export class AuthService {
                 }
             });
 
-            if (!existedAccount) {
+            // const accountWithEmailAndUsername = await this.databaseService.account.findFirst({
+            //     where: {
+            //         username: {
+            //             not: null
+            //         }
+            //     },
+            //     include: {
+            //         user: {
+            //             where: {
+            //                 email: {
+            //                     not: null
+            //                 }
+            //             }
+            //         }
+            //     }
+            // });
+
+            if (!accountWithEmailAndUsername) {
                 throw new AuthBadRequestException("User not found or not authorized");
             }
 
-            if (existedAccount.type !== AccountType.REGISTER.toLowerCase()) {
-                throw new AuthBadRequestException(`Quick login account with ${existedAccount.type} can't use this function.`);
+            if (accountWithEmailAndUsername.type !== AccountType.REGISTER) {
+                throw new AuthBadRequestException(`Quick login account with ${accountWithEmailAndUsername.type} can't use this function.`);
             }
 
-            const isMatch = await this.bryptService.isEqual(password, existedAccount.password);
+            const isMatch = await this.bryptService.isEqual(password, accountWithEmailAndUsername.password);
             if (!isMatch) {
                 throw new AuthBadRequestException("Password is not correct");
             }
 
-            const tokenPayload: TokenPayload = { username: existedAccount.username, userId: existedAccount.user.id }
+            const tokenPayload: TokenPayload = { username: accountWithEmailAndUsername.username, userId: accountWithEmailAndUsername.user.id }
             const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
             const accessToken = this.jwtService.sign(tokenPayload, {
                 secret: accessTokenSecret, expiresIn: '1d'
@@ -140,9 +158,10 @@ export class AuthService {
             const refreshToken = this.jwtService.sign(tokenPayload, {
                 secret: refreshTokenSecret, expiresIn: '7d'
             });
+
             await this.databaseService.account.update({
                 where: {
-                    id: existedAccount.id,
+                    id: accountWithEmailAndUsername.id,
                 },
                 data: {
                     rfToken: refreshToken
@@ -155,18 +174,13 @@ export class AuthService {
                 maxAge: 30 * 24 * 60 * 60 * 1000 // 30days
             });
 
-            delete existedAccount.password;
-            delete existedAccount.rfToken;
-
+            delete accountWithEmailAndUsername.password;
+            delete accountWithEmailAndUsername.rfToken;
+            
             return {
                 accessToken,
-                account
+                account: accountWithEmailAndUsername
             }
-
-        } catch (error) {
-            this.logger.error(error);
-            throw new InternalServerErrorException(`Error when logining: ${error}`);
-        }
     }
 
     async refreshToken(refreshToken: string) {
@@ -237,7 +251,7 @@ export class AuthService {
 
     }
 
-    getCookieWithJwtToken(username: string, userId: string) {
+    async getCookieWithJwtToken(username: string, userId: string) {
         try {
             const payload: TokenPayload = { username, userId };
 
@@ -245,13 +259,34 @@ export class AuthService {
                 secret,
                 signOptions: { expiresIn },
             } = this.appConfigService.getJwtConfig();
-            const { accessTokenSecret } = this.appConfigService.getJwtSecrets();
+            const { accessTokenSecret, refreshTokenSecret } = this.appConfigService.getJwtSecrets();
+            let accessToken = null, refreshToken = null;
+            if (secret == accessTokenSecret) {
+                accessToken = this.jwtService.sign(payload, {
+                    secret: accessTokenSecret,
+                    expiresIn: expiresIn
+                });
 
-            const token = this.jwtService.sign(payload, {
-                secret: accessTokenSecret,
-                expiresIn: expiresIn
-            });
-            return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${expiresIn};SameSite=None; Secure`;
+                refreshToken = this.jwtService.sign(payload, {
+                    secret: refreshTokenSecret,
+                    expiresIn: '7d'
+                });
+
+                await this.databaseService.account.update({
+                    where: {
+                        username: username,
+                        userId: userId
+                    },
+                    data: {
+                        rfToken: refreshToken
+                    }
+                })
+            }
+
+            return {
+                cookie: `Authentication=${accessToken}; HttpOnly; Path=/; Max-Age=${expiresIn};SameSite=None; Secure`,
+                accessToken
+            };
         } catch (error) {
             this.logger.error(error);
             throw new InternalServerErrorException(error);

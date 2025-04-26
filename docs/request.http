@@ -24,7 +24,7 @@ POST {{serverUrl}}/auth/signin
 Content-Type: application/json
 
 {
-  "account": "vinhtrungngo1907@gmail.com",
+  "account": "vinhngo97",
   "password": "123456"
 }
 ###

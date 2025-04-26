@@ -21,7 +21,12 @@ export class AuthController {
 
     @Post("signin")
     async signIn(@Body() payload: { account: string, password: string }, @Res() res: Response) {
-        return await this.authService.signIn(payload, res);
+        try {
+            return await this.authService.signIn(payload, res);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
     }
 
     @Post("register")

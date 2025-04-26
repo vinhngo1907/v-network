@@ -9,6 +9,6 @@ export class PostService {
     constructor(
         private readonly appConfigService: AppConfigService,
         private readonly databaseService: DatabaseService
-
     ) { }
+    
 }
