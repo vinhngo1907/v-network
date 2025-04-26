@@ -86,4 +86,17 @@ export class UserService {
 
         return user;
     }
+    async listUser(name: string) {
+        return await this.databaseService.account.findMany({
+            where: name ? {
+                OR: [
+                    { username: { contains: name, mode: 'insensitive' } }, // Search username trong Account
+                    { user: { is: { fullName: { contains: name, mode: 'insensitive' } } } }, // Đây nè, phải thêm `is: {}` !!!
+                ],
+            } : {},
+            include: {
+                user: true,
+            },
+        });
+    }
 }

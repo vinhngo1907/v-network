@@ -1,4 +1,4 @@
-import { Controller, Get, Injectable, InternalServerErrorException, Param, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Injectable, InternalServerErrorException, Param, Query, Req, Res, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { UserService } from "./service";
 import { LocalAuthGuard } from "../auth/guards/local";
@@ -26,9 +26,9 @@ export class UserController {
 
     @Get()
     @UseGuards(JwtAuthGuard)
-    async searchUser(@Req() req: Request, @Res() res: Response){
+    async getAllUser(@Query("name") name: string) {
         try {
-            
+            const data = await this.userService.listUser(name);
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
