@@ -1,31 +1,27 @@
-import NotFound from "@/components/global/NotFound";
-import { useParams } from "next/navigation";
-import React from "react";
-import { useSelector } from "react-redux";
-
-const generatePage = (pageName) => {
-    const component = () => require(`../pages/${pageName}`);
-    try {
-        return React.createElement(component());
-    } catch (error) {
-        return <NotFound />
-    }
-}
+'use client'
+import { useParams } from 'next/navigation'
+import NotFound from '@/components/global/NotFound'
+import dynamic from 'next/dynamic'
 
 const PageRender = () => {
-    const { auth } = useSelector(state => state);
-    const { id, page } = useParams();
+    const params = useParams()
+    const { page, id } = params
 
-    let pageName = '';
-    if (auth.token) {
-        if (id) {
-            pageName = `${page}/${id}`;
+    let PageComponent = null
+
+    try {
+        if (page && id) {
+            PageComponent = dynamic(() => import(`@/pages/${page}/[id].js`))
+        } else if (page) {
+            PageComponent = dynamic(() => import(`@/pages/${page}/page.js`))
         } else {
-            pageName = page;
+            throw new Error("Invalid page")
         }
+    } catch (err) {
+        return <NotFound />
     }
 
-    return generatePage(pageName);
+    return PageComponent ? <PageComponent /> : <NotFound />
 }
 
 export default PageRender;

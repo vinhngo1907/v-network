@@ -1,20 +1,9 @@
-import Head from "next/head";
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import React from "react";
 import styles from "@/styles/Home.module.css";
 import Home from "./home";
-
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
-	subsets: ["latin"],
-});
+import { useSelector } from "react-redux";
 
 export default function IndexPage() {
-	const { auth } = useSelector((state) => state);
+	const { auth } = useSelector(state => state);
 	return auth.token ? <Home /> : <Login />;
 }
